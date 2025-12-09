@@ -3,8 +3,8 @@ import React, { useRef, useEffect } from 'react';
 
 // Хук для инициализации WebGL
 const useShaderBackground = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animationFrameRef = useRef<number>();
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const animationFrameRef = useRef<number | null>(null);
   const rendererRef = useRef<WebGLRenderer | null>(null);
 
   class WebGLRenderer {
@@ -125,7 +125,9 @@ const useShaderBackground = () => {
     
     return () => {
       window.removeEventListener('resize', resize);
-      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+      if (animationFrameRef.current !== null) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
       if (rendererRef.current) rendererRef.current.reset();
     };
   }, []);
