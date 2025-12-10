@@ -1,9 +1,10 @@
 self.__BUILD_MANIFEST = {
-  "/_error": [
-    "static/chunks/pages/_error.js"
-  ],
   "__rewrites": {
-    "afterFiles": [],
+    "afterFiles": [
+      {
+        "source": "/api/generation/:path*"
+      }
+    ],
     "beforeFiles": [],
     "fallback": []
   },

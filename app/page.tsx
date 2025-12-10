@@ -13,6 +13,7 @@ import { UserMenu } from "@/components/ui/user-menu";
 import { cn } from "@/lib/utils";
 import { ChevronDown, PanelLeft } from "lucide-react";
 
+
 // --- ТИПЫ ---
 type Message = {
   id: string;
@@ -22,12 +23,15 @@ type Message = {
   isStreaming?: boolean;
 };
 
+
 type ChatSession = {
   id: string;
   title: string;
 };
 
+
 type AppPhase = "auth" | "loading" | "app";
+
 
 // --- ЭФФЕКТ ПЕЧАТНОЙ МАШИНКИ ---
 const TypewriterEffect = ({ text, onComplete }: { text: string, onComplete?: () => void }) => {
@@ -49,6 +53,7 @@ const TypewriterEffect = ({ text, onComplete }: { text: string, onComplete?: () 
   }, [text, onComplete]);
   return <span className="whitespace-pre-wrap">{displayedText}</span>;
 };
+
 
 // --- ОСНОВНОЙ КОМПОНЕНТ ---
 export default function Home() {
@@ -152,9 +157,12 @@ export default function Home() {
     }
   };
 
-  // --- ЛОГИКА ОТПРАВКИ СООБЩЕНИЯ (ИНТЕГРАЦИЯ С БЭКОМ И ИСТОРИЕЙ) ---
-  // --- ЛОГИКА ОТПРАВКИ СООБЩЕНИЯ (ИСПРАВЛЕННАЯ) ---
-  const handleSendMessage = async (content: string, files?: File[]) => {
+  // --- ОБНОВЛЕННАЯ ЛОГИКА ОТПРАВКИ СООБЩЕНИЯ С РЕЖИМАМИ ---
+  const handleSendMessage = async (
+    content: string, 
+    files?: File[], 
+    mode?: "search" | "think" | "canvas" | null
+  ) => {
     if (!content.trim() && (!files || files.length === 0)) return;
     if (!isChatStarted) setIsChatStarted(true);
 
@@ -167,7 +175,6 @@ export default function Home() {
     setMessages((prev) => [...prev, userMessage]);
     setIsThinking(true);
 
-    // Локальная переменная для ID чата, чтобы не зависеть от асинхронного стейта
     let chatIdForSave = activeChatId;
 
     try {
@@ -181,15 +188,13 @@ export default function Home() {
           
           if (res.ok) {
               const newChat = await res.json();
-              chatIdForSave = newChat.id; // Запоминаем ID!
-              
-              // Обновляем UI
+              chatIdForSave = newChat.id;
               setActiveChatId(newChat.id);
               setChatHistory(prev => [newChat, ...prev]);
           }
       }
 
-      // 2. СОХРАНЯЕМ СООБЩЕНИЕ ЮЗЕРА (теперь точно есть ID)
+      // 2. Сохраняем сообщение юзера
       if (chatIdForSave) {
           await fetch(`/api/chats/${chatIdForSave}`, {
             method: 'POST',
@@ -197,30 +202,75 @@ export default function Home() {
           });
       }
 
-      // 3. Генерация ответа
-      const response = await fetch("/api/generation/ui/full", {
+      // 3. ВЫБОР ЭНДПОИНТА В ЗАВИСИМОСТИ ОТ РЕЖИМА
+      let apiEndpoint = "/api/generation/ui/full"; // Default (обычный чат)
+      let requestBody: any = { 
+        requirements_text: content,
+        url: null, 
+        html: null 
+      };
+
+      // Маршрутизация по режимам
+      if (mode === "search") {
+         // Режим Swagger / API Tests
+         apiEndpoint = "/api/proxy/generation/api-vms"; 
+         requestBody = {
+            swagger_url: content.includes("http") ? content.trim() : null,
+            swagger_json: !content.includes("http") ? content : null
+         };
+      } 
+      else if (mode === "think") {
+        apiEndpoint = "/api/proxy/generation/automation/e2e";
+        requestBody = {
+           name: "Auto-generated Suite from Prompt",
+           cases: [
+               {
+                   id: "temp-1",
+                   title: "User Scenario",
+                   description: content,
+                   steps: [],
+                   expected_result: "Success",
+                   priority: "HIGH",
+                   tags: ["e2e", "auto"]
+               }
+           ]
+        };
+     } 
+      else if (mode === "canvas") {
+         apiEndpoint = "/api/proxy/requirements/ui";
+         requestBody = {
+            requirements_text: content
+         };
+      }
+
+      // Выполняем запрос
+      const response = await fetch(apiEndpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          url: null,
-          html: null,
-          requirements_text: content, 
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
          const errorText = await response.text();
-         throw new Error(`Server Error: ${response.status} ${errorText}`);
+         throw new Error(`Server Error (${apiEndpoint}): ${response.status} ${errorText}`);
       }
 
       const data = await response.json();
       const formattedJson = JSON.stringify(data, null, 2);
       
-      let replyText = "Генерация завершена. Результат:";
-      if (data.test_cases && Array.isArray(data.test_cases)) {
-          replyText = `Сгенерировано ${data.test_cases.length} тест-кейсов.`;
-      }
+      // Формируем красивый ответ
+      let replyText = "✅ Результат генерации:";
       
+      if (mode === "canvas" && data.test_cases) {
+          replyText = `✅ Сгенерировано ${data.test_cases.length} ручных тест-кейсов из требований.`;
+      } else if (mode === "think" && data.code) {
+          replyText = `✅ Код автотестов сгенерирован.`;
+      } else if (mode === "search") {
+          replyText = `✅ API тесты из Swagger обработаны.`;
+      } else if (data.test_cases && Array.isArray(data.test_cases)) {
+          replyText = `✅ Сгенерировано ${data.test_cases.length} тест-кейсов.`;
+      }
+
       const fullAiContent = `${replyText}\n\n\`\`\`json\n${formattedJson}\n\`\`\``;
 
       const aiMessage: Message = {
@@ -232,10 +282,19 @@ export default function Home() {
       
       setMessages((prev) => [...prev, aiMessage]);
       setCurrentCode(formattedJson);
-      setCurrentFileName("generated_tests.json");
+      
+      // Меняем имя файла в зависимости от режима
+      const fileNameMap: Record<string, string> = {
+          "search": "api_tests_swagger.json",
+          "think": "autotests_code.py",
+          "canvas": "manual_test_cases.json",
+          "default": "generated_result.json"
+      };
+      setCurrentFileName(fileNameMap[mode || "default"]);
+      
       setIsCodePanelOpen(true);
 
-      // 4. СОХРАНЯЕМ ОТВЕТ БОТА
+      // 4. Сохраняем ответ бота
       if (chatIdForSave) {
           await fetch(`/api/chats/${chatIdForSave}`, {
             method: 'POST',
@@ -271,7 +330,7 @@ export default function Home() {
         {appPhase === "auth" && (
           <motion.div 
             key="auth" 
-            className="absolute inset-0 z-20"
+            className="absolute inset-0 z-20 bg-black"
             transition={{ duration: 0.5 }}
           >
             <AuthScreen onLoginSuccess={handleLoginSuccess} />
@@ -283,7 +342,7 @@ export default function Home() {
         )}
       </AnimatePresence>
       {appPhase === "app" && (
-        <LampContainer>
+        <LampContainer className="bg-black">
           <BackgroundShader />
 
           <ChatSidebar 
@@ -295,6 +354,7 @@ export default function Home() {
             activeChatId={activeChatId}
           />
 
+          {/* ВЕРХНЯЯ ПАНЕЛЬ (МЕНЮ + ПРОФИЛЬ) */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -330,6 +390,7 @@ export default function Home() {
                 </motion.div>
               )}
             </AnimatePresence>
+            
             <motion.div 
               layout
               className={cn(
@@ -340,6 +401,7 @@ export default function Home() {
               )}
             >
               
+              {/* ЧАТ */}
               <motion.div
                 layout="position"
                 transition={{ type: "spring", damping: 25, stiffness: 120 }}
@@ -383,7 +445,7 @@ export default function Home() {
                           "max-w-[85%] px-5 py-3 rounded-2xl text-base leading-relaxed shadow-sm",
                           msg.role === "user"
                             ? "bg-[#1e40af]/30 text-blue-100 border border-blue-500/20 rounded-br-none"
-                            : "bg-[#1e293b]/60 text-slate-200 border border-slate-700/50 rounded-bl-none overflow-x-auto" 
+                            : "bg-slate-900/60 text-slate-200 border border-slate-700/50 rounded-bl-none overflow-x-auto" 
                         )}>
                           {msg.role === "assistant" && msg.isStreaming ? (
                             <TypewriterEffect text={msg.content} />
@@ -400,7 +462,7 @@ export default function Home() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         className="flex w-full justify-start"
                       >
-                          <div className="flex items-center gap-2 px-4 py-3 bg-[#1e293b]/60 border border-lime-500/20 rounded-2xl rounded-bl-none backdrop-blur-sm shadow-[0_0_15px_-5px_rgba(132,204,22,0.3)]">
+                          <div className="flex items-center gap-2 px-4 py-3 bg-slate-900/60 border border-lime-500/20 rounded-2xl rounded-bl-none backdrop-blur-sm shadow-[0_0_15px_-5px_rgba(132,204,22,0.3)]">
                             <motion.span 
                               animate={{ opacity: [0.5, 1, 0.5] }}
                               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}

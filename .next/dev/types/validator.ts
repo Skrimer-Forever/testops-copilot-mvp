@@ -92,6 +92,33 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../../app/api/proxy/generation/api-vms/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/proxy/generation/api-vms">> = Specific
+  const handler = {} as typeof import("../../../app/api/proxy/generation/api-vms/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../../app/api/proxy/generation/automation/e2e/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/proxy/generation/automation/e2e">> = Specific
+  const handler = {} as typeof import("../../../app/api/proxy/generation/automation/e2e/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../../app/api/proxy/requirements/ui/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/proxy/requirements/ui">> = Specific
+  const handler = {} as typeof import("../../../app/api/proxy/requirements/ui/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../../app/api/register/route.ts
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/register">> = Specific

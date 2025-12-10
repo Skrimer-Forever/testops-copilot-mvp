@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { motion, AnimatePresence } from "framer-motion"; // <-- Добавил AnimatePresence сюда
+import { motion, AnimatePresence } from "framer-motion";
 import { MessageSquare, Plus, PanelLeft, History } from "lucide-react";
 import { cn } from "@/lib/utils";
 

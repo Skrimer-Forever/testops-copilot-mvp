@@ -1,4 +1,4 @@
-// components/ui/ai-prompt-box.tsx
+"use client";
 import React from "react";
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
@@ -373,11 +373,12 @@ const CustomDivider: React.FC = () => (
 
 // Main PromptInputBox Component
 interface PromptInputBoxProps {
-  onSend?: (message: string, files?: File[]) => void;
+  onSend?: (message: string, files?: File[], mode?: "search" | "think" | "canvas" | null) => void;
   isLoading?: boolean;
   placeholder?: string;
   className?: string;
 }
+
 export const PromptInputBox = React.forwardRef((props: PromptInputBoxProps, ref: React.Ref<HTMLDivElement>) => {
   const { onSend = () => {}, isLoading = false, placeholder = "Type your message here...", className } = props;
   const [input, setInput] = React.useState("");
@@ -467,12 +468,20 @@ export const PromptInputBox = React.forwardRef((props: PromptInputBoxProps, ref:
 
   const handleSubmit = () => {
     if (input.trim() || files.length > 0) {
+      let activeMode: "search" | "think" | "canvas" | null = null;
+      if (showSearch) activeMode = "search";
+      else if (showThink) activeMode = "think";
+      else if (showCanvas) activeMode = "canvas";
+
+      // Префиксы можно убрать, если они не нужны в UI
       let messagePrefix = "";
-      if (showSearch) messagePrefix = "[Search: ";
-      else if (showThink) messagePrefix = "[Think: ";
-      else if (showCanvas) messagePrefix = "[Canvas: ";
-      const formattedInput = messagePrefix ? `${messagePrefix}${input}]` : input;
-      onSend(formattedInput, files);
+      if (showSearch) messagePrefix = "[Swagger/API] ";
+      else if (showThink) messagePrefix = "[Auto-Tests] ";
+      else if (showCanvas) messagePrefix = "[Requirements] ";
+      
+      const formattedInput = messagePrefix ? `${messagePrefix}\n${input}` : input;
+
+      onSend(formattedInput, files, activeMode);
       setInput("");
       setFiles([]);
       setFilePreviews({});
@@ -534,7 +543,7 @@ export const PromptInputBox = React.forwardRef((props: PromptInputBoxProps, ref:
               showSearch
                 ? "Вставьте JSON спецификации OpenAPI или URL эндпоинта..."
                 : showThink
-                ? "Опишите сценарий для генерации Python-автотестов..."
+                ? "Опишите сценарий для генерации автотестов (E2E/API)..."
                 : showCanvas
                 ? "Вставьте требования для генерации ручных тест-кейсов..."
                 : placeholder
@@ -571,7 +580,7 @@ export const PromptInputBox = React.forwardRef((props: PromptInputBoxProps, ref:
                 className={cn(
                   "rounded-full transition-all flex items-center gap-1 px-2 py-1 border h-8",
                   showSearch
-                    ? "bg-[#1EAEDB]/15 border-[#1EAEDB] text-[#1EAEDB]"
+                    ? "bg-[#84cc16]/15 border-[#84cc16] text-[#84cc16]"
                     : "bg-transparent border-transparent text-[#9CA3AF] hover:text-[#D1D5DB]"
                 )}
               >
@@ -581,7 +590,7 @@ export const PromptInputBox = React.forwardRef((props: PromptInputBoxProps, ref:
                     whileHover={{ rotate: showSearch ? 360 : 15, scale: 1.1, transition: { type: "spring", stiffness: 300, damping: 10 } }}
                     transition={{ type: "spring", stiffness: 260, damping: 25 }}
                   >
-                    <Globe className={cn("w-4 h-4", showSearch ? "text-[#1EAEDB]" : "text-inherit")} />
+                    <Globe className={cn("w-4 h-4", showSearch ? "text-[#84cc16]" : "text-inherit")} />
                   </motion.div>
                 </div>
                 <AnimatePresence>
@@ -591,7 +600,7 @@ export const PromptInputBox = React.forwardRef((props: PromptInputBoxProps, ref:
                       animate={{ width: "auto", opacity: 1 }}
                       exit={{ width: 0, opacity: 0 }}
                       transition={{ duration: 0.2 }}
-                      className="text-xs overflow-hidden whitespace-nowrap text-[#1EAEDB] flex-shrink-0"
+                      className="text-xs overflow-hidden whitespace-nowrap text-[#84cc16] flex-shrink-0"
                     >
                       Swagger
                     </motion.span>
