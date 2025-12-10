@@ -76,10 +76,10 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$serv
 var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/lib/prisma.ts [app-route] (ecmascript)");
 ;
 ;
-async function GET(req, { params } // 1. Тип Promise
+async function GET(req, { params } // <--- Promise (для Next.js 15)
 ) {
-    const { id } = await params; // 2. Ждем params
     try {
+        const { id } = await params; // <--- await (ОБЯЗАТЕЛЬНО)
         const messages = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].message.findMany({
             where: {
                 chatId: id
@@ -90,6 +90,7 @@ async function GET(req, { params } // 1. Тип Promise
         });
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json(messages);
     } catch (error) {
+        console.error("Error fetching messages:", error);
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
             message: 'Error fetching messages'
         }, {
@@ -97,16 +98,20 @@ async function GET(req, { params } // 1. Тип Promise
         });
     }
 }
-async function POST(req, { params } // 1. Тип Promise
+async function POST(req, { params } // <--- Promise (для Next.js 15)
 ) {
-    const { id } = await params; // 2. Ждем params
     try {
-        const { role, content } = await req.json();
+        const { id } = await params; // <--- await (ОБЯЗАТЕЛЬНО)
+        const body = await req.json();
+        console.log(`Saving message to DB for ChatID: ${id}`); // Лог для проверки
+        const { role, content, attachedCode, attachedFileName } = body;
         const message = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].message.create({
             data: {
                 chatId: id,
                 role,
-                content
+                content,
+                attachedCode: attachedCode || null,
+                attachedFileName: attachedFileName || null
             }
         });
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json(message);

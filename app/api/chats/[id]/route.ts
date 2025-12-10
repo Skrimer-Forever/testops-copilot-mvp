@@ -1,14 +1,14 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-// GET /api/chats/[id] - Получить историю
+// GET /api/chats/[id] - Получить историю чата
 export async function GET(
   req: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> } // <--- Promise (для Next.js 15)
 ) {
-  const { id } = await params; // Ждем params (Next.js 15 style)
-  
   try {
+    const { id } = await params; // <--- await (ОБЯЗАТЕЛЬНО)
+
     const messages = await prisma.message.findMany({
       where: { chatId: id },
       orderBy: { createdAt: 'asc' },
@@ -23,23 +23,21 @@ export async function GET(
 // POST /api/chats/[id] - Сохранить сообщение
 export async function POST(
   req: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> } // <--- Promise (для Next.js 15)
 ) {
-  const { id } = await params; // Ждем params
-
   try {
+    const { id } = await params; // <--- await (ОБЯЗАТЕЛЬНО)
+    
     const body = await req.json();
-    console.log("Saving message for chat:", id, body); // Лог для отладки
+    console.log(`Saving message to DB for ChatID: ${id}`); // Лог для проверки
 
-    // Извлекаем всё, включая файлы
     const { role, content, attachedCode, attachedFileName } = body;
 
     const message = await prisma.message.create({
       data: {
-        chatId: id, 
+        chatId: id,
         role,
         content,
-        // Сохраняем файлы, если они есть
         attachedCode: attachedCode || null,
         attachedFileName: attachedFileName || null,
       },

@@ -2981,15 +2981,32 @@ function Home() {
     const [messages, setMessages] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     const [activeChatId, setActiveChatId] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(undefined);
     const [chatHistory, setChatHistory] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
-    // Текущий отображаемый код (в панели)
     const [currentCode, setCurrentCode] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
     const [currentFileName, setCurrentFileName] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
     const scrollRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(null);
+    // --- СТИЛИ ДЛЯ СКРОЛЛБАРА (INJECTION) ---
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        const style = document.createElement("style");
+        style.innerHTML = `
+      .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+      .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+      .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.2); border-radius: 10px; }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.4); }
+      .custom-scrollbar { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.2) transparent; }
+    `;
+        document.head.appendChild(style);
+        return ()=>{
+            document.head.removeChild(style);
+        };
+    }, []);
     // --- API ФУНКЦИИ ---
     const loadChats = async (uid)=>{
         try {
             const res = await fetch(`/api/chats?userId=${uid}`);
-            if (res.ok) setChatHistory(await res.json());
+            if (res.ok) {
+                const data = await res.json();
+                setChatHistory(data);
+            }
         } catch (e) {
             console.error("Error loading chats", e);
         }
@@ -2999,7 +3016,6 @@ function Home() {
             const res = await fetch(`/api/chats/${chatId}`);
             if (res.ok) {
                 const dbMessages = await res.json();
-                // Мапим сообщения из БД в наш формат с кодом
                 setMessages(dbMessages.map((m)=>({
                         id: m.id,
                         role: m.role,
@@ -3012,14 +3028,32 @@ function Home() {
             console.error("Error loading messages", e);
         }
     };
+    // --- ВОССТАНОВЛЕНИЕ СЕССИИ ---
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        const savedUserStr = localStorage.getItem("testops_user");
+        if (savedUserStr) {
+            try {
+                const savedUser = JSON.parse(savedUserStr);
+                if (savedUser && savedUser.id) {
+                    setUsername(savedUser.username);
+                    setUserId(savedUser.id);
+                    loadChats(savedUser.id);
+                    setAppPhase("app");
+                }
+            } catch (e) {
+                localStorage.removeItem("testops_user");
+            }
+        }
+    }, []);
     // --- ЛОГИКА ФАЗ И АВТОРИЗАЦИИ ---
     const handleLoginSuccess = (user)=>{
-        if (typeof user === 'object' && user.id) {
+        if (typeof user === "object" && user.id) {
             setUsername(user.username);
             setUserId(user.id);
+            localStorage.setItem("testops_user", JSON.stringify(user)); // Сохраняем сессию
             loadChats(user.id);
         } else {
-            setUsername(typeof user === 'string' ? user : 'User');
+            setUsername(typeof user === "string" ? user : "User");
         }
         setAppPhase("loading");
     };
@@ -3027,6 +3061,7 @@ function Home() {
         setAppPhase("app");
     };
     const handleLogout = ()=>{
+        localStorage.removeItem("testops_user"); // Удаляем сессию
         setIsChatStarted(false);
         setIsCodePanelOpen(false);
         setMessages([]);
@@ -3063,16 +3098,17 @@ function Home() {
             setIsChatStarted(true);
         }
     };
-    // Функция открытия кода из пузыря сообщения
     const openCodeFromMessage = (code, filename)=>{
         setCurrentCode(code);
         setCurrentFileName(filename);
         setIsCodePanelOpen(true);
     };
     // --- ЛОГИКА ОТПРАВКИ СООБЩЕНИЯ ---
+    // --- ОТЛАДОЧНАЯ ВЕРСИЯ handleSendMessage ---
     const handleSendMessage = async (content, files, mode)=>{
         if (!content.trim() && (!files || files.length === 0)) return;
         if (!isChatStarted) setIsChatStarted(true);
+        console.log(">>> START SENDING. UserID:", userId);
         const userMessage = {
             id: Date.now().toString(),
             role: "user",
@@ -3087,36 +3123,58 @@ function Home() {
         let chatIdForSave = activeChatId;
         try {
             // 1. Создание чата
-            if (!chatIdForSave && userId !== null) {
-                const title = content.slice(0, 30);
-                const res = await fetch('/api/chats', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        userId,
-                        title
-                    })
-                });
-                if (res.ok) {
-                    const newChat = await res.json();
-                    chatIdForSave = newChat.id;
-                    setActiveChatId(newChat.id);
-                    setChatHistory((prev)=>[
-                            newChat,
-                            ...prev
-                        ]);
+            if (!chatIdForSave) {
+                if (userId !== null) {
+                    console.log(">>> Creating NEW chat for UserID:", userId);
+                    const title = content.slice(0, 30);
+                    const res = await fetch('/api/chats', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            userId,
+                            title
+                        })
+                    });
+                    if (res.ok) {
+                        const newChat = await res.json();
+                        console.log(">>> Chat CREATED. ID:", newChat.id);
+                        chatIdForSave = newChat.id;
+                        setActiveChatId(newChat.id);
+                        setChatHistory((prev)=>[
+                                newChat,
+                                ...prev
+                            ]);
+                    } else {
+                        console.error(">>> FAILED to create chat. Status:", res.status);
+                        alert("Ошибка создания чата!");
+                    }
+                } else {
+                    console.error(">>> UserID is NULL! Cannot create chat.");
+                    alert("Ошибка: вы не авторизованы (UserID is null). Перезайдите.");
+                    return;
                 }
+            } else {
+                console.log(">>> Using EXISTING chat ID:", chatIdForSave);
             }
             // 2. Сохранение сообщения юзера
             if (chatIdForSave) {
-                await fetch(`/api/chats/${chatIdForSave}`, {
+                console.log(">>> Saving USER message to chat:", chatIdForSave);
+                const res = await fetch(`/api/chats/${chatIdForSave}`, {
                     method: 'POST',
                     body: JSON.stringify({
                         role: 'user',
                         content: content
                     })
                 });
+                if (!res.ok) {
+                    console.error(">>> Failed to save USER message. Status:", res.status);
+                    const txt = await res.text();
+                    console.error("Error text:", txt);
+                } else {
+                    console.log(">>> USER message saved OK.");
+                }
             }
-            // 3. Выбор эндпоинта
+            // 3. Генерация (Эндпоинты)
+            // ... (твой код выбора apiEndpoint) ...
             let apiEndpoint = "/api/generation/ui/full";
             let requestBody = {
                 requirements_text: content,
@@ -3130,20 +3188,22 @@ function Home() {
                     swagger_json: !content.includes("http") ? content : null
                 };
             } else if (mode === "think") {
-                apiEndpoint = "/api/proxy/generation/automation/e2e";
+                const urlRegex = /https?:\/\/[^\s]+/g;
+                const foundUrls = content.match(urlRegex);
+                const targetUrl = foundUrls ? foundUrls[0] : "https://example.com";
+                apiEndpoint = `/api/proxy/generation/automation/e2e?base_url=${encodeURIComponent(targetUrl)}`;
                 requestBody = {
-                    name: "Auto-generated Suite from Prompt",
+                    name: "Auto-generated Suite",
                     cases: [
                         {
                             id: "temp-1",
-                            title: "User Scenario",
+                            title: "Scenario",
                             description: content,
                             steps: [],
                             expected_result: "Success",
                             priority: "HIGH",
                             tags: [
-                                "e2e",
-                                "auto"
+                                "e2e"
                             ]
                         }
                     ]
@@ -3154,6 +3214,7 @@ function Home() {
                     requirements_text: content
                 };
             }
+            console.log(">>> Calling API:", apiEndpoint);
             const response = await fetch(apiEndpoint, {
                 method: "POST",
                 headers: {
@@ -3166,29 +3227,21 @@ function Home() {
                 throw new Error(`Server Error (${apiEndpoint}): ${response.status} ${errorText}`);
             }
             const data = await response.json();
-            // Логика извлечения кода
+            console.log(">>> Generation SUCCESS.");
+            // ... (Логика contentToShow) ...
             let contentToShow = JSON.stringify(data, null, 2);
             let fileNameToShow = "generated_result.json";
             let replyText = "✅ Результат генерации:";
             let hasCode = false;
             if (mode === "think" && data.pytest_code) {
                 contentToShow = data.pytest_code.replace(/\\n/g, '\n');
-                replyText = `✅ Код автотестов сгенерирован (${data.test_count} тестов).`;
+                replyText = `✅ Код автотестов сгенерирован.`;
                 fileNameToShow = "autotests_code.py";
                 hasCode = true;
-            } else if (mode === "canvas" && data.test_cases) {
-                replyText = `✅ Сгенерировано ${data.test_cases.length} ручных тест-кейсов из требований.`;
-                fileNameToShow = "manual_test_cases.json";
+            } else if (data.test_cases) {
                 hasCode = true;
-            } else if (mode === "search") {
-                replyText = `✅ API тесты из Swagger обработаны.`;
-                fileNameToShow = "api_tests_swagger.json";
-                hasCode = true;
-            } else if (data.test_cases && Array.isArray(data.test_cases)) {
-                replyText = `✅ Сгенерировано ${data.test_cases.length} тест-кейсов.`;
-                hasCode = true;
+                replyText = "✅ Тест-кейсы готовы.";
             }
-            // Обновляем стейт сообщений (добавляем ответ с кодом)
             const aiMessage = {
                 id: (Date.now() + 1).toString(),
                 role: "assistant",
@@ -3206,9 +3259,10 @@ function Home() {
                 setCurrentFileName(fileNameToShow);
                 setIsCodePanelOpen(true);
             }
-            // 4. Сохранение ответа ВМЕСТЕ С КОДОМ
+            // 4. Сохранение ответа БОТА
             if (chatIdForSave) {
-                await fetch(`/api/chats/${chatIdForSave}`, {
+                console.log(">>> Saving BOT message to chat:", chatIdForSave);
+                const res = await fetch(`/api/chats/${chatIdForSave}`, {
                     method: 'POST',
                     body: JSON.stringify({
                         role: 'assistant',
@@ -3217,19 +3271,12 @@ function Home() {
                         attachedFileName: hasCode ? fileNameToShow : null
                     })
                 });
+                if (!res.ok) console.error(">>> Failed to save BOT message.");
+                else console.log(">>> BOT message saved OK.");
             }
         } catch (error) {
             console.error("Error in chat flow:", error);
-            const errorMessage = {
-                id: (Date.now() + 1).toString(),
-                role: "assistant",
-                content: `⚠️ Ошибка: ${error.message}`,
-                isStreaming: false
-            };
-            setMessages((prev)=>[
-                    ...prev,
-                    errorMessage
-                ]);
+        // ...
         } finally{
             setIsThinking(false);
         }
@@ -3263,25 +3310,25 @@ function Home() {
                             onLoginSuccess: handleLoginSuccess
                         }, void 0, false, {
                             fileName: "[project]/app/page.tsx",
-                            lineNumber: 351,
+                            lineNumber: 387,
                             columnNumber: 13
                         }, this)
                     }, "auth", false, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 346,
+                        lineNumber: 382,
                         columnNumber: 11
                     }, this),
                     appPhase === "loading" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$loading$2d$screen$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["LoadingScreen"], {
                         onComplete: handleLoadingComplete
                     }, "loading", false, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 356,
+                        lineNumber: 392,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 344,
+                lineNumber: 380,
                 columnNumber: 7
             }, this),
             appPhase === "app" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$lamp$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["LampContainer"], {
@@ -3289,7 +3336,7 @@ function Home() {
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$background$2d$shader$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["BackgroundShader"], {}, void 0, false, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 361,
+                        lineNumber: 397,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$chat$2d$sidebar$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["ChatSidebar"], {
@@ -3301,7 +3348,7 @@ function Home() {
                         activeChatId: activeChatId
                     }, void 0, false, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 363,
+                        lineNumber: 399,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -3331,12 +3378,12 @@ function Home() {
                                     className: "w-6 h-6"
                                 }, void 0, false, {
                                     fileName: "[project]/app/page.tsx",
-                                    lineNumber: 385,
+                                    lineNumber: 421,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 379,
+                                lineNumber: 415,
                                 columnNumber: 13
                             }, this),
                             currentCode && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].button, {
@@ -3360,12 +3407,12 @@ function Home() {
                                     className: "w-6 h-6"
                                 }, void 0, false, {
                                     fileName: "[project]/app/page.tsx",
-                                    lineNumber: 403,
+                                    lineNumber: 438,
                                     columnNumber: 17
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 390,
+                                lineNumber: 425,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$user$2d$menu$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["UserMenu"], {
@@ -3373,13 +3420,13 @@ function Home() {
                                 onLogout: handleLogout
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 407,
+                                lineNumber: 442,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 373,
+                        lineNumber: 409,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3410,24 +3457,24 @@ function Home() {
                                             "TestOps ",
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("br", {}, void 0, false, {
                                                 fileName: "[project]/app/page.tsx",
-                                                lineNumber: 422,
+                                                lineNumber: 456,
                                                 columnNumber: 29
                                             }, this),
                                             " Assistant"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/page.tsx",
-                                        lineNumber: 421,
+                                        lineNumber: 455,
                                         columnNumber: 19
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/page.tsx",
-                                    lineNumber: 414,
+                                    lineNumber: 448,
                                     columnNumber: 17
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 412,
+                                lineNumber: 446,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -3451,18 +3498,18 @@ function Home() {
                                                     opacity: 1
                                                 },
                                                 onClick: handleCloseChat,
-                                                className: "absolute top-4 right-4 z-50 p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full transition-colors",
+                                                className: "absolute top-4 right-16 z-50 p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full transition-colors",
                                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$down$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronDown$3e$__["ChevronDown"], {
                                                     className: "w-5 h-5"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/page.tsx",
-                                                    lineNumber: 459,
-                                                    columnNumber: 23
+                                                    lineNumber: 492,
+                                                    columnNumber: 21
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/page.tsx",
-                                                lineNumber: 453,
-                                                columnNumber: 21
+                                                lineNumber: 486,
+                                                columnNumber: 19
                                             }, this),
                                             isChatStarted && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
                                                 initial: {
@@ -3493,7 +3540,7 @@ function Home() {
                                                                     text: msg.content
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/page.tsx",
-                                                                    lineNumber: 485,
+                                                                    lineNumber: 523,
                                                                     columnNumber: 29
                                                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                                     className: "flex flex-col gap-2",
@@ -3503,8 +3550,8 @@ function Home() {
                                                                             children: msg.content
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/app/page.tsx",
-                                                                            lineNumber: 488,
-                                                                            columnNumber: 33
+                                                                            lineNumber: 526,
+                                                                            columnNumber: 31
                                                                         }, this),
                                                                         msg.attachedCode && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].button, {
                                                                             whileHover: {
@@ -3520,8 +3567,8 @@ function Home() {
                                                                                     className: "w-4 h-4"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/app/page.tsx",
-                                                                                    lineNumber: 498,
-                                                                                    columnNumber: 41
+                                                                                    lineNumber: 540,
+                                                                                    columnNumber: 35
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                                     children: [
@@ -3530,29 +3577,29 @@ function Home() {
                                                                                     ]
                                                                                 }, void 0, true, {
                                                                                     fileName: "[project]/app/page.tsx",
-                                                                                    lineNumber: 499,
-                                                                                    columnNumber: 41
+                                                                                    lineNumber: 541,
+                                                                                    columnNumber: 35
                                                                                 }, this)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/app/page.tsx",
-                                                                            lineNumber: 492,
-                                                                            columnNumber: 37
+                                                                            lineNumber: 529,
+                                                                            columnNumber: 33
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/app/page.tsx",
-                                                                    lineNumber: 487,
+                                                                    lineNumber: 525,
                                                                     columnNumber: 29
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/page.tsx",
-                                                                lineNumber: 478,
+                                                                lineNumber: 514,
                                                                 columnNumber: 25
                                                             }, this)
                                                         }, msg.id, false, {
                                                             fileName: "[project]/app/page.tsx",
-                                                            lineNumber: 472,
+                                                            lineNumber: 505,
                                                             columnNumber: 23
                                                         }, this)),
                                                     isThinking && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -3587,8 +3634,8 @@ function Home() {
                                                                     children: "Думаю..."
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/page.tsx",
-                                                                    lineNumber: 515,
-                                                                    columnNumber: 29
+                                                                    lineNumber: 557,
+                                                                    columnNumber: 27
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                                     className: "h-8 w-8 relative flex-shrink-0",
@@ -3596,29 +3643,29 @@ function Home() {
                                                                         className: "w-full h-full"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/page.tsx",
-                                                                        lineNumber: 523,
-                                                                        columnNumber: 33
+                                                                        lineNumber: 565,
+                                                                        columnNumber: 29
                                                                     }, this)
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/page.tsx",
-                                                                    lineNumber: 522,
-                                                                    columnNumber: 29
+                                                                    lineNumber: 564,
+                                                                    columnNumber: 27
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/app/page.tsx",
-                                                            lineNumber: 514,
-                                                            columnNumber: 27
+                                                            lineNumber: 556,
+                                                            columnNumber: 25
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/page.tsx",
-                                                        lineNumber: 509,
+                                                        lineNumber: 551,
                                                         columnNumber: 23
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/page.tsx",
-                                                lineNumber: 464,
+                                                lineNumber: 497,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -3632,18 +3679,18 @@ function Home() {
                                                     className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$utils$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["cn"])(isChatStarted ? "border-slate-700 shadow-none bg-slate-900/50" : "bg-slate-950/30 backdrop-blur-md border-slate-700/30 shadow-2xl hover:bg-slate-950/50 transition-colors")
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/page.tsx",
-                                                    lineNumber: 536,
+                                                    lineNumber: 574,
                                                     columnNumber: 19
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/page.tsx",
-                                                lineNumber: 531,
+                                                lineNumber: 573,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/page.tsx",
-                                        lineNumber: 439,
+                                        lineNumber: 472,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$components$2f$AnimatePresence$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AnimatePresence"], {
@@ -3676,41 +3723,41 @@ function Home() {
                                                 onClose: ()=>setIsCodePanelOpen(false)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/page.tsx",
-                                                lineNumber: 558,
+                                                lineNumber: 598,
                                                 columnNumber: 21
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/page.tsx",
-                                            lineNumber: 551,
+                                            lineNumber: 591,
                                             columnNumber: 19
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/page.tsx",
-                                        lineNumber: 549,
+                                        lineNumber: 589,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 428,
+                                lineNumber: 462,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 410,
+                        lineNumber: 445,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 360,
+                lineNumber: 396,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/page.tsx",
-        lineNumber: 343,
+        lineNumber: 379,
         columnNumber: 5
     }, this);
 }

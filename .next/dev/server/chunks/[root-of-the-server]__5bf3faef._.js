@@ -54,8 +54,15 @@ const BACKEND_URL = "http://176.123.161.105:8000";
 async function POST(req) {
     try {
         const body = await req.json();
-        // Исправленный URL
-        const res = await fetch(`${BACKEND_URL}/generation/automation/e2e`, {
+        // 1. Получаем параметры из URL запроса к Next.js
+        const { searchParams } = new URL(req.url);
+        const baseUrlParam = searchParams.get("base_url");
+        // 2. Формируем URL для бэкенда с учетом параметра
+        let targetUrl = `${BACKEND_URL}/generation/automation/e2e`;
+        if (baseUrlParam) {
+            targetUrl += `?base_url=${encodeURIComponent(baseUrlParam)}`;
+        }
+        const res = await fetch(targetUrl, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
