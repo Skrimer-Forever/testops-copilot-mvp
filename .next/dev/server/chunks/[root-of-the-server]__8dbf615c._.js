@@ -54,7 +54,6 @@ const BACKEND_URL = "http://176.123.161.105:8000";
 async function POST(req) {
     try {
         const body = await req.json();
-        // Исправленный URL
         const res = await fetch(`${BACKEND_URL}/generation/api/vms`, {
             method: "POST",
             headers: {

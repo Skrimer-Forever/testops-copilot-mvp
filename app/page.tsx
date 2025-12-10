@@ -147,7 +147,7 @@ export default function Home() {
     if (typeof user === "object" && user.id) {
       setUsername(user.username);
       setUserId(user.id);
-      localStorage.setItem("testops_user", JSON.stringify(user)); // Сохраняем сессию
+      localStorage.setItem("testops_user", JSON.stringify(user));
       loadChats(user.id);
     } else {
       setUsername(typeof user === "string" ? user : "User");
@@ -160,7 +160,7 @@ export default function Home() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("testops_user"); // Удаляем сессию
+    localStorage.removeItem("testops_user");
     setIsChatStarted(false);
     setIsCodePanelOpen(false);
     setMessages([]);
@@ -209,163 +209,184 @@ export default function Home() {
   };
 
   // --- ЛОГИКА ОТПРАВКИ СООБЩЕНИЯ ---
-    // --- ОТЛАДОЧНАЯ ВЕРСИЯ handleSendMessage ---
-    const handleSendMessage = async (
-      content: string,
-      files?: File[],
-      mode?: "search" | "think" | "canvas" | null
-    ) => {
-      if (!content.trim() && (!files || files.length === 0)) return;
-      if (!isChatStarted) setIsChatStarted(true);
-  
-      console.log(">>> START SENDING. UserID:", userId);
-  
-      const userMessage: Message = {
-        id: Date.now().toString(),
-        role: "user",
-        content,
-        files,
-      };
-      setMessages((prev) => [...prev, userMessage]);
-      setIsThinking(true);
-  
-      let chatIdForSave = activeChatId;
-  
-      try {
-        // 1. Создание чата
-        if (!chatIdForSave) {
-           if (userId !== null) {
-              console.log(">>> Creating NEW chat for UserID:", userId);
-              const title = content.slice(0, 30);
-              const res = await fetch('/api/chats', {
-                  method: 'POST',
-                  body: JSON.stringify({ userId, title })
-              });
-              if (res.ok) {
-                  const newChat = await res.json();
-                  console.log(">>> Chat CREATED. ID:", newChat.id);
-                  chatIdForSave = newChat.id;
-                  setActiveChatId(newChat.id);
-                  setChatHistory(prev => [newChat, ...prev]);
-              } else {
-                  console.error(">>> FAILED to create chat. Status:", res.status);
-                  alert("Ошибка создания чата!");
-              }
-           } else {
-               console.error(">>> UserID is NULL! Cannot create chat.");
-               alert("Ошибка: вы не авторизованы (UserID is null). Перезайдите.");
-               return;
-           }
-        } else {
-            console.log(">>> Using EXISTING chat ID:", chatIdForSave);
-        }
-  
-        // 2. Сохранение сообщения юзера
-        if (chatIdForSave) {
-            console.log(">>> Saving USER message to chat:", chatIdForSave);
-            const res = await fetch(`/api/chats/${chatIdForSave}`, {
-              method: 'POST',
-              body: JSON.stringify({ role: 'user', content: content })
-            });
-            if (!res.ok) {
-               console.error(">>> Failed to save USER message. Status:", res.status);
-               const txt = await res.text();
-               console.error("Error text:", txt);
-            } else {
-               console.log(">>> USER message saved OK.");
-            }
-        }
-  
-        // 3. Генерация (Эндпоинты)
-        // ... (твой код выбора apiEndpoint) ...
-        let apiEndpoint = "/api/generation/ui/full";
-        let requestBody: any = { requirements_text: content, url: null, html: null };
-  
-        if (mode === "search") {
-           apiEndpoint = "/api/proxy/generation/api-vms";
-           requestBody = { swagger_url: content.includes("http") ? content.trim() : null, swagger_json: !content.includes("http") ? content : null };
-        }
-        else if (mode === "think") {
-          const urlRegex = /https?:\/\/[^\s]+/g;
-          const foundUrls = content.match(urlRegex);
-          const targetUrl = foundUrls ? foundUrls[0] : "https://example.com";
-          apiEndpoint = `/api/proxy/generation/automation/e2e?base_url=${encodeURIComponent(targetUrl)}`;
-          requestBody = {
-             name: "Auto-generated Suite",
-             cases: [{ id: "temp-1", title: "Scenario", description: content, steps: [], expected_result: "Success", priority: "HIGH", tags: ["e2e"] }]
-          };
-        }
-        else if (mode === "canvas") {
-           apiEndpoint = "/api/proxy/requirements/ui";
-           requestBody = { requirements_text: content };
-        }
-  
-        console.log(">>> Calling API:", apiEndpoint);
-        const response = await fetch(apiEndpoint, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(requestBody),
-        });
-  
-        if (!response.ok) {
-           const errorText = await response.text();
-           throw new Error(`Server Error (${apiEndpoint}): ${response.status} ${errorText}`);
-        }
-  
-        const data = await response.json();
-        console.log(">>> Generation SUCCESS.");
-  
-        // ... (Логика contentToShow) ...
-        let contentToShow = JSON.stringify(data, null, 2);
-        let fileNameToShow = "generated_result.json";
-        let replyText = "✅ Результат генерации:";
-        let hasCode = false;
-  
-        if (mode === "think" && data.pytest_code) {
-            contentToShow = data.pytest_code.replace(/\\n/g, '\n');
-            replyText = `✅ Код автотестов сгенерирован.`;
-            fileNameToShow = "autotests_code.py";
-            hasCode = true;
-        }
-        // ... (остальные условия) ...
-        else if (data.test_cases) { hasCode = true; replyText = "✅ Тест-кейсы готовы."; }
-  
-  
-        const aiMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          role: "assistant",
-          content: replyText,
-          isStreaming: false,
-          attachedCode: hasCode ? contentToShow : undefined,
-          attachedFileName: hasCode ? fileNameToShow : undefined
-        };
-        setMessages((prev) => [...prev, aiMessage]);
-        if (hasCode) { setCurrentCode(contentToShow); setCurrentFileName(fileNameToShow); setIsCodePanelOpen(true); }
-  
-        // 4. Сохранение ответа БОТА
-        if (chatIdForSave) {
-            console.log(">>> Saving BOT message to chat:", chatIdForSave);
-            const res = await fetch(`/api/chats/${chatIdForSave}`, {
-              method: 'POST',
-              body: JSON.stringify({
-                  role: 'assistant',
-                  content: replyText,
-                  attachedCode: hasCode ? contentToShow : null,
-                  attachedFileName: hasCode ? fileNameToShow : null
-              })
-            });
-            if (!res.ok) console.error(">>> Failed to save BOT message.");
-            else console.log(">>> BOT message saved OK.");
-        }
-  
-      } catch (error: any) {
-        console.error("Error in chat flow:", error);
-        // ...
-      } finally {
-        setIsThinking(false);
-      }
+  const handleSendMessage = async (
+    content: string,
+    files?: File[],
+    mode?: "search" | "think" | "canvas" | null
+  ) => {
+    if (!content.trim() && (!files || files.length === 0)) return;
+    if (!isChatStarted) setIsChatStarted(true);
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      role: "user",
+      content,
+      files,
     };
-  
+    setMessages((prev) => [...prev, userMessage]);
+    setIsThinking(true);
+
+    let chatIdForSave = activeChatId;
+
+    try {
+      // 1. Создание чата
+      if (!chatIdForSave && userId !== null) {
+        const title = content.slice(0, 30);
+        const res = await fetch("/api/chats", {
+          method: "POST",
+          body: JSON.stringify({ userId, title }),
+        });
+        if (res.ok) {
+          const newChat = await res.json();
+          chatIdForSave = newChat.id;
+          setActiveChatId(newChat.id);
+          setChatHistory((prev) => [newChat, ...prev]);
+        }
+      }
+
+      // 2. Сохранение сообщения юзера
+      if (chatIdForSave) {
+        await fetch(`/api/chats/${chatIdForSave}`, {
+          method: "POST",
+          body: JSON.stringify({ role: "user", content: content }),
+        });
+      }
+
+      // 3. Выбор эндпоинта
+      let apiEndpoint = "/api/generation/ui/full";
+      let requestBody: any = {
+        requirements_text: content,
+        url: null,
+        html: null,
+      };
+
+      if (mode === "search") {
+        apiEndpoint = "/api/proxy/generation/api-vms";
+        requestBody = {
+          swagger_url: content.includes("http") ? content.trim() : null,
+          swagger_json: !content.includes("http") ? content : null,
+        };
+      } else if (mode === "think") {
+        const urlRegex = /https?:\/\/[^\s]+/g;
+        const foundUrls = content.match(urlRegex);
+        const targetUrl = foundUrls ? foundUrls[0] : "https://example.com";
+        apiEndpoint = `/api/proxy/generation/automation/e2e?base_url=${encodeURIComponent(targetUrl)}`;
+        requestBody = {
+          name: "Auto-generated Suite",
+          cases: [
+            {
+              id: "temp-1",
+              title: "User Scenario",
+              description: content,
+              steps: [],
+              expected_result: "Success",
+              priority: "HIGH",
+              tags: ["e2e", "auto"],
+            },
+          ],
+        };
+      } else if (mode === "canvas") {
+        apiEndpoint = "/api/proxy/requirements/ui";
+        requestBody = { requirements_text: content };
+      }
+
+      const response = await fetch(apiEndpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Server Error (${apiEndpoint}): ${response.status} ${errorText}`);
+      }
+
+      const data = await response.json();
+
+      let contentToShow = JSON.stringify(data, null, 2);
+      let fileNameToShow = "generated_result.json";
+      let replyText = "✅ Результат генерации:";
+      let hasCode = false;
+
+      // --- ПОИСК РЕЗУЛЬТАТОВ В РАЗНЫХ ПОЛЯХ ---
+      const foundCases = data.test_cases 
+                      || data.cases 
+                      || (data.test_suite && data.test_suite.cases) 
+                      || data.covered_features; 
+
+      if (mode === "search" || (data.test_suite && !data.pytest_code)) {
+         replyText = `✅ API тесты из Swagger обработаны (${data.test_count || (foundCases ? foundCases.length : 0)} тестов).`;
+         fileNameToShow = "api_tests_swagger.json";
+         hasCode = true;
+         // contentToShow уже содержит JSON
+      } 
+      else if (mode === "think" && data.pytest_code) {
+        contentToShow = data.pytest_code.replace(/\\n/g, "\n");
+        replyText = `✅ Код автотестов сгенерирован (${data.test_count || 0} тестов).`;
+        fileNameToShow = "autotests_code.py";
+        hasCode = true;
+      } 
+      else if (foundCases) {
+        // Canvas / Covered Features
+        const count = Array.isArray(foundCases) ? foundCases.length : 0;
+        replyText = `✅ Сгенерировано ${count} тест-кейсов.`;
+        fileNameToShow = "test_cases.json";
+        
+        // Для Canvas лучше показать весь JSON, чтобы было видно summary и покрытие
+        if (data.covered_features) {
+             contentToShow = JSON.stringify(data, null, 2);
+        } else {
+             contentToShow = JSON.stringify(foundCases, null, 2);
+        }
+        hasCode = true;
+      } 
+      else if (data.test_cases && Array.isArray(data.test_cases)) {
+        replyText = `✅ Сгенерировано ${data.test_cases.length} тест-кейсов.`;
+        hasCode = true;
+      }
+
+      const aiMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: replyText,
+        isStreaming: false,
+        attachedCode: hasCode ? contentToShow : undefined,
+        attachedFileName: hasCode ? fileNameToShow : undefined,
+      };
+
+      setMessages((prev) => [...prev, aiMessage]);
+
+      if (hasCode) {
+        setCurrentCode(contentToShow);
+        setCurrentFileName(fileNameToShow);
+        setIsCodePanelOpen(true);
+      }
+
+      // 4. Сохранение ответа
+      if (chatIdForSave) {
+        await fetch(`/api/chats/${chatIdForSave}`, {
+          method: "POST",
+          body: JSON.stringify({
+            role: "assistant",
+            content: replyText,
+            attachedCode: hasCode ? contentToShow : null,
+            attachedFileName: hasCode ? fileNameToShow : null,
+          }),
+        });
+      }
+    } catch (error: any) {
+      console.error("Error in chat flow:", error);
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: `⚠️ Ошибка: ${error.message}`,
+        isStreaming: false,
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setIsThinking(false);
+    }
+  };
 
   // --- АВТОСКРОЛЛ ---
   useEffect(() => {

@@ -3284,7 +3284,7 @@ function Home() {
         if (typeof user === "object" && user.id) {
             setUsername(user.username);
             setUserId(user.id);
-            localStorage.setItem("testops_user", JSON.stringify(user)); // Сохраняем сессию
+            localStorage.setItem("testops_user", JSON.stringify(user));
             loadChats(user.id);
         } else {
             setUsername(typeof user === "string" ? user : "User");
@@ -3295,7 +3295,7 @@ function Home() {
         setAppPhase("app");
     };
     const handleLogout = ()=>{
-        localStorage.removeItem("testops_user"); // Удаляем сессию
+        localStorage.removeItem("testops_user");
         setIsChatStarted(false);
         setIsCodePanelOpen(false);
         setMessages([]);
@@ -3338,11 +3338,9 @@ function Home() {
         setIsCodePanelOpen(true);
     };
     // --- ЛОГИКА ОТПРАВКИ СООБЩЕНИЯ ---
-    // --- ОТЛАДОЧНАЯ ВЕРСИЯ handleSendMessage ---
     const handleSendMessage = async (content, files, mode)=>{
         if (!content.trim() && (!files || files.length === 0)) return;
         if (!isChatStarted) setIsChatStarted(true);
-        console.log(">>> START SENDING. UserID:", userId);
         const userMessage = {
             id: Date.now().toString(),
             role: "user",
@@ -3357,58 +3355,36 @@ function Home() {
         let chatIdForSave = activeChatId;
         try {
             // 1. Создание чата
-            if (!chatIdForSave) {
-                if (userId !== null) {
-                    console.log(">>> Creating NEW chat for UserID:", userId);
-                    const title = content.slice(0, 30);
-                    const res = await fetch('/api/chats', {
-                        method: 'POST',
-                        body: JSON.stringify({
-                            userId,
-                            title
-                        })
-                    });
-                    if (res.ok) {
-                        const newChat = await res.json();
-                        console.log(">>> Chat CREATED. ID:", newChat.id);
-                        chatIdForSave = newChat.id;
-                        setActiveChatId(newChat.id);
-                        setChatHistory((prev)=>[
-                                newChat,
-                                ...prev
-                            ]);
-                    } else {
-                        console.error(">>> FAILED to create chat. Status:", res.status);
-                        alert("Ошибка создания чата!");
-                    }
-                } else {
-                    console.error(">>> UserID is NULL! Cannot create chat.");
-                    alert("Ошибка: вы не авторизованы (UserID is null). Перезайдите.");
-                    return;
+            if (!chatIdForSave && userId !== null) {
+                const title = content.slice(0, 30);
+                const res = await fetch("/api/chats", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        userId,
+                        title
+                    })
+                });
+                if (res.ok) {
+                    const newChat = await res.json();
+                    chatIdForSave = newChat.id;
+                    setActiveChatId(newChat.id);
+                    setChatHistory((prev)=>[
+                            newChat,
+                            ...prev
+                        ]);
                 }
-            } else {
-                console.log(">>> Using EXISTING chat ID:", chatIdForSave);
             }
             // 2. Сохранение сообщения юзера
             if (chatIdForSave) {
-                console.log(">>> Saving USER message to chat:", chatIdForSave);
-                const res = await fetch(`/api/chats/${chatIdForSave}`, {
-                    method: 'POST',
+                await fetch(`/api/chats/${chatIdForSave}`, {
+                    method: "POST",
                     body: JSON.stringify({
-                        role: 'user',
+                        role: "user",
                         content: content
                     })
                 });
-                if (!res.ok) {
-                    console.error(">>> Failed to save USER message. Status:", res.status);
-                    const txt = await res.text();
-                    console.error("Error text:", txt);
-                } else {
-                    console.log(">>> USER message saved OK.");
-                }
             }
-            // 3. Генерация (Эндпоинты)
-            // ... (твой код выбора apiEndpoint) ...
+            // 3. Выбор эндпоинта
             let apiEndpoint = "/api/generation/ui/full";
             let requestBody = {
                 requirements_text: content,
@@ -3431,13 +3407,14 @@ function Home() {
                     cases: [
                         {
                             id: "temp-1",
-                            title: "Scenario",
+                            title: "User Scenario",
                             description: content,
                             steps: [],
                             expected_result: "Success",
                             priority: "HIGH",
                             tags: [
-                                "e2e"
+                                "e2e",
+                                "auto"
                             ]
                         }
                     ]
@@ -3448,7 +3425,6 @@ function Home() {
                     requirements_text: content
                 };
             }
-            console.log(">>> Calling API:", apiEndpoint);
             const response = await fetch(apiEndpoint, {
                 method: "POST",
                 headers: {
@@ -3461,20 +3437,37 @@ function Home() {
                 throw new Error(`Server Error (${apiEndpoint}): ${response.status} ${errorText}`);
             }
             const data = await response.json();
-            console.log(">>> Generation SUCCESS.");
-            // ... (Логика contentToShow) ...
             let contentToShow = JSON.stringify(data, null, 2);
             let fileNameToShow = "generated_result.json";
             let replyText = "✅ Результат генерации:";
             let hasCode = false;
-            if (mode === "think" && data.pytest_code) {
-                contentToShow = data.pytest_code.replace(/\\n/g, '\n');
-                replyText = `✅ Код автотестов сгенерирован.`;
+            // --- ПОИСК РЕЗУЛЬТАТОВ В РАЗНЫХ ПОЛЯХ ---
+            const foundCases = data.test_cases || data.cases || data.test_suite && data.test_suite.cases || data.covered_features;
+            if (mode === "search" || data.test_suite && !data.pytest_code) {
+                replyText = `✅ API тесты из Swagger обработаны (${data.test_count || (foundCases ? foundCases.length : 0)} тестов).`;
+                fileNameToShow = "api_tests_swagger.json";
+                hasCode = true;
+            // contentToShow уже содержит JSON
+            } else if (mode === "think" && data.pytest_code) {
+                contentToShow = data.pytest_code.replace(/\\n/g, "\n");
+                replyText = `✅ Код автотестов сгенерирован (${data.test_count || 0} тестов).`;
                 fileNameToShow = "autotests_code.py";
                 hasCode = true;
-            } else if (data.test_cases) {
+            } else if (foundCases) {
+                // Canvas / Covered Features
+                const count = Array.isArray(foundCases) ? foundCases.length : 0;
+                replyText = `✅ Сгенерировано ${count} тест-кейсов.`;
+                fileNameToShow = "test_cases.json";
+                // Для Canvas лучше показать весь JSON, чтобы было видно summary и покрытие
+                if (data.covered_features) {
+                    contentToShow = JSON.stringify(data, null, 2);
+                } else {
+                    contentToShow = JSON.stringify(foundCases, null, 2);
+                }
                 hasCode = true;
-                replyText = "✅ Тест-кейсы готовы.";
+            } else if (data.test_cases && Array.isArray(data.test_cases)) {
+                replyText = `✅ Сгенерировано ${data.test_cases.length} тест-кейсов.`;
+                hasCode = true;
             }
             const aiMessage = {
                 id: (Date.now() + 1).toString(),
@@ -3493,24 +3486,30 @@ function Home() {
                 setCurrentFileName(fileNameToShow);
                 setIsCodePanelOpen(true);
             }
-            // 4. Сохранение ответа БОТА
+            // 4. Сохранение ответа
             if (chatIdForSave) {
-                console.log(">>> Saving BOT message to chat:", chatIdForSave);
-                const res = await fetch(`/api/chats/${chatIdForSave}`, {
-                    method: 'POST',
+                await fetch(`/api/chats/${chatIdForSave}`, {
+                    method: "POST",
                     body: JSON.stringify({
-                        role: 'assistant',
+                        role: "assistant",
                         content: replyText,
                         attachedCode: hasCode ? contentToShow : null,
                         attachedFileName: hasCode ? fileNameToShow : null
                     })
                 });
-                if (!res.ok) console.error(">>> Failed to save BOT message.");
-                else console.log(">>> BOT message saved OK.");
             }
         } catch (error) {
             console.error("Error in chat flow:", error);
-        // ...
+            const errorMessage = {
+                id: (Date.now() + 1).toString(),
+                role: "assistant",
+                content: `⚠️ Ошибка: ${error.message}`,
+                isStreaming: false
+            };
+            setMessages((prev)=>[
+                    ...prev,
+                    errorMessage
+                ]);
         } finally{
             setIsThinking(false);
         }
@@ -3546,25 +3545,25 @@ function Home() {
                             onLoginSuccess: handleLoginSuccess
                         }, void 0, false, {
                             fileName: "[project]/app/page.tsx",
-                            lineNumber: 387,
+                            lineNumber: 408,
                             columnNumber: 13
                         }, this)
                     }, "auth", false, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 382,
+                        lineNumber: 403,
                         columnNumber: 11
                     }, this),
                     appPhase === "loading" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$loading$2d$screen$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["LoadingScreen"], {
                         onComplete: handleLoadingComplete
                     }, "loading", false, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 392,
+                        lineNumber: 413,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 380,
+                lineNumber: 401,
                 columnNumber: 7
             }, this),
             appPhase === "app" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$lamp$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["LampContainer"], {
@@ -3572,7 +3571,7 @@ function Home() {
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$background$2d$shader$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["BackgroundShader"], {}, void 0, false, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 397,
+                        lineNumber: 418,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$chat$2d$sidebar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ChatSidebar"], {
@@ -3584,7 +3583,7 @@ function Home() {
                         activeChatId: activeChatId
                     }, void 0, false, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 399,
+                        lineNumber: 420,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -3614,12 +3613,12 @@ function Home() {
                                     className: "w-6 h-6"
                                 }, void 0, false, {
                                     fileName: "[project]/app/page.tsx",
-                                    lineNumber: 421,
+                                    lineNumber: 442,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 415,
+                                lineNumber: 436,
                                 columnNumber: 13
                             }, this),
                             currentCode && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].button, {
@@ -3643,12 +3642,12 @@ function Home() {
                                     className: "w-6 h-6"
                                 }, void 0, false, {
                                     fileName: "[project]/app/page.tsx",
-                                    lineNumber: 438,
+                                    lineNumber: 459,
                                     columnNumber: 17
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 425,
+                                lineNumber: 446,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$user$2d$menu$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["UserMenu"], {
@@ -3656,13 +3655,13 @@ function Home() {
                                 onLogout: handleLogout
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 442,
+                                lineNumber: 463,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 409,
+                        lineNumber: 430,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3693,24 +3692,24 @@ function Home() {
                                             "TestOps ",
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("br", {}, void 0, false, {
                                                 fileName: "[project]/app/page.tsx",
-                                                lineNumber: 456,
+                                                lineNumber: 477,
                                                 columnNumber: 29
                                             }, this),
                                             " Assistant"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/page.tsx",
-                                        lineNumber: 455,
+                                        lineNumber: 476,
                                         columnNumber: 19
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/page.tsx",
-                                    lineNumber: 448,
+                                    lineNumber: 469,
                                     columnNumber: 17
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 446,
+                                lineNumber: 467,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -3739,12 +3738,12 @@ function Home() {
                                                     className: "w-5 h-5"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/page.tsx",
-                                                    lineNumber: 492,
+                                                    lineNumber: 513,
                                                     columnNumber: 21
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/page.tsx",
-                                                lineNumber: 486,
+                                                lineNumber: 507,
                                                 columnNumber: 19
                                             }, this),
                                             isChatStarted && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -3776,7 +3775,7 @@ function Home() {
                                                                     text: msg.content
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/page.tsx",
-                                                                    lineNumber: 523,
+                                                                    lineNumber: 544,
                                                                     columnNumber: 29
                                                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                                     className: "flex flex-col gap-2",
@@ -3786,7 +3785,7 @@ function Home() {
                                                                             children: msg.content
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/app/page.tsx",
-                                                                            lineNumber: 526,
+                                                                            lineNumber: 547,
                                                                             columnNumber: 31
                                                                         }, this),
                                                                         msg.attachedCode && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].button, {
@@ -3803,7 +3802,7 @@ function Home() {
                                                                                     className: "w-4 h-4"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/app/page.tsx",
-                                                                                    lineNumber: 540,
+                                                                                    lineNumber: 561,
                                                                                     columnNumber: 35
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3813,29 +3812,29 @@ function Home() {
                                                                                     ]
                                                                                 }, void 0, true, {
                                                                                     fileName: "[project]/app/page.tsx",
-                                                                                    lineNumber: 541,
+                                                                                    lineNumber: 562,
                                                                                     columnNumber: 35
                                                                                 }, this)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/app/page.tsx",
-                                                                            lineNumber: 529,
+                                                                            lineNumber: 550,
                                                                             columnNumber: 33
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/app/page.tsx",
-                                                                    lineNumber: 525,
+                                                                    lineNumber: 546,
                                                                     columnNumber: 29
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/page.tsx",
-                                                                lineNumber: 514,
+                                                                lineNumber: 535,
                                                                 columnNumber: 25
                                                             }, this)
                                                         }, msg.id, false, {
                                                             fileName: "[project]/app/page.tsx",
-                                                            lineNumber: 505,
+                                                            lineNumber: 526,
                                                             columnNumber: 23
                                                         }, this)),
                                                     isThinking && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -3870,7 +3869,7 @@ function Home() {
                                                                     children: "Думаю..."
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/page.tsx",
-                                                                    lineNumber: 557,
+                                                                    lineNumber: 578,
                                                                     columnNumber: 27
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3879,29 +3878,29 @@ function Home() {
                                                                         className: "w-full h-full"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/page.tsx",
-                                                                        lineNumber: 565,
+                                                                        lineNumber: 586,
                                                                         columnNumber: 29
                                                                     }, this)
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/page.tsx",
-                                                                    lineNumber: 564,
+                                                                    lineNumber: 585,
                                                                     columnNumber: 27
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/app/page.tsx",
-                                                            lineNumber: 556,
+                                                            lineNumber: 577,
                                                             columnNumber: 25
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/page.tsx",
-                                                        lineNumber: 551,
+                                                        lineNumber: 572,
                                                         columnNumber: 23
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/page.tsx",
-                                                lineNumber: 497,
+                                                lineNumber: 518,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -3915,18 +3914,18 @@ function Home() {
                                                     className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$utils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["cn"])(isChatStarted ? "border-slate-700 shadow-none bg-slate-900/50" : "bg-slate-950/30 backdrop-blur-md border-slate-700/30 shadow-2xl hover:bg-slate-950/50 transition-colors")
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/page.tsx",
-                                                    lineNumber: 574,
+                                                    lineNumber: 595,
                                                     columnNumber: 19
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/page.tsx",
-                                                lineNumber: 573,
+                                                lineNumber: 594,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/page.tsx",
-                                        lineNumber: 472,
+                                        lineNumber: 493,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$components$2f$AnimatePresence$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AnimatePresence"], {
@@ -3959,41 +3958,41 @@ function Home() {
                                                 onClose: ()=>setIsCodePanelOpen(false)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/page.tsx",
-                                                lineNumber: 598,
+                                                lineNumber: 619,
                                                 columnNumber: 21
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/page.tsx",
-                                            lineNumber: 591,
+                                            lineNumber: 612,
                                             columnNumber: 19
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/page.tsx",
-                                        lineNumber: 589,
+                                        lineNumber: 610,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 462,
+                                lineNumber: 483,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 445,
+                        lineNumber: 466,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 396,
+                lineNumber: 417,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/page.tsx",
-        lineNumber: 379,
+        lineNumber: 400,
         columnNumber: 5
     }, this);
 }

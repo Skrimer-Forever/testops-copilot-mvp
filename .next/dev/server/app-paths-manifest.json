@@ -2,5 +2,7 @@
   "/api/chats/[id]/route": "app/api/chats/[id]/route.js",
   "/api/chats/route": "app/api/chats/route.js",
   "/api/generation/ui/full/route": "app/api/generation/ui/full/route.js",
+  "/api/proxy/generation/api-vms/route": "app/api/proxy/generation/api-vms/route.js",
+  "/api/proxy/requirements/ui/route": "app/api/proxy/requirements/ui/route.js",
   "/page": "app/page.js"
 }
