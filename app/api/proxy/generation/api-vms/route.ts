@@ -6,7 +6,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    // Исправленный URL
+
     const res = await fetch(`${BACKEND_URL}/generation/api/vms`, {
       method: "POST",
       headers: {

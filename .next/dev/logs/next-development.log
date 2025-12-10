@@ -1,103 +1,42 @@
-[00:00:00.957] Server  LOG      ✓ Ready in 697ms
-[00:00:05.054] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:01:09.667] Browser ERROR   Error in chat flow: {}
-[00:01:10.192] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:06:47.114] Browser ERROR   Error in chat flow: {}
-[00:06:47.635] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:06:54.648] Browser ERROR   Error in chat flow: {}
-[00:10:29.552] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:12:02.407] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:12:52.888] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:13:03.041] Browser ERROR   Error in chat flow: {}
-[00:14:43.917] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:17:34.961] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\.next\dev\server\chunks\[root-of-the-server]__f92cd1c8._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:17:34.983] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:17:34.996] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\.next\dev\server\chunks\node_modules_next_562fd84f._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:17:35.001] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:17:35.004] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:17:35.005] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:17:35.005] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:17:35.006] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:17:35.007] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:17:35.011] Server  ERROR   Proxy Error (Requirements): TypeError: fetch failed
-[00:17:35.146] Browser ERROR   Error in chat flow: {}
-[00:17:35.752] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:18:20.200] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:19:16.119] Browser ERROR   Error in chat flow: {}
-[00:22:52.286] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:24:51.984] Server  LOG      ✓ Compiled in 36ms
-[00:24:59.105] Server  LOG      ✓ Compiled in 38ms
-[00:25:56.280] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\.next\dev\server\chunks\[root-of-the-server]__8dbf615c._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:25:56.281] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:25:56.293] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\.next\dev\server\chunks\node_modules_next_c16f0d98._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:25:56.294] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:25:56.294] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:25:56.295] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:25:56.295] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:25:56.296] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:25:56.297] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:25:56.298] Server  ERROR   Proxy Error (API VMs): TypeError: fetch failed
-[00:25:56.443] Browser ERROR   Error in chat flow: {}
-[00:25:57.049] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:26:08.963] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\.next\dev\server\chunks\[root-of-the-server]__8dbf615c._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:26:08.964] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:26:08.964] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\.next\dev\server\chunks\node_modules_next_c16f0d98._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:26:08.965] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:26:08.965] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:26:08.965] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:26:08.966] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:26:08.966] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:26:08.966] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:26:08.967] Server  ERROR   Proxy Error (API VMs): TypeError: fetch failed
-[00:26:09.096] Browser ERROR   Error in chat flow: {}
-[00:26:09.703] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:26:20.018] Server  LOG      ✓ Compiled in 30ms
-[00:26:22.027] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:26:56.715] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\.next\dev\server\chunks\[root-of-the-server]__5bf3faef._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:26:56.716] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:26:56.729] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\.next\dev\server\chunks\node_modules_next_f5642e55._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:26:56.730] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:26:56.730] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:26:56.731] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:26:56.731] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:26:56.731] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:26:56.732] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:26:56.735] Server  ERROR   Proxy Error (E2E Auto): TypeError: fetch failed
-[00:26:56.839] Browser ERROR   Error in chat flow: {}
-[00:26:57.375] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:27:18.745] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:29:50.532] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:33:07.596] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:33:34.180] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:38:50.079] Server  LOG        Reload env: .env
-[00:39:09.974] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\.next\dev\server\chunks\[root-of-the-server]__8dbf615c._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:39:09.975] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:39:09.982] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\.next\dev\server\chunks\node_modules_next_c16f0d98._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:39:09.982] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:39:09.983] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:39:09.983] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:39:09.983] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:39:09.984] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:39:09.984] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:39:09.985] Server  ERROR   Proxy Error (API VMs): TypeError: fetch failed
-[00:39:10.090] Browser ERROR   Error in chat flow: {}
-[00:39:10.619] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:39:24.321] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\.next\dev\server\chunks\[root-of-the-server]__8dbf615c._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:39:24.322] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:39:24.322] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\.next\dev\server\chunks\node_modules_next_c16f0d98._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:39:24.323] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:39:24.323] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:39:24.323] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:39:24.324] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:39:24.324] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:39:24.325] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:39:24.326] Server  ERROR   Proxy Error (API VMs): TypeError: fetch failed
-[00:39:24.430] Browser ERROR   Error in chat flow: {}
-[00:39:24.949] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:40:40.704] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:41:25.743] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:42:11.878] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:42:36.294] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:43:45.735] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:46:41.866] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:48:08.865] Browser LOG     THREE.WebGLRenderer: Context Lost.
+[00:00:02.598] Server  LOG      ✓ Ready in 2.1s
+[00:00:05.608] Server  LOG      ○ Compiling / ...
+[00:00:07.832] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:14.776] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\.next\dev\server\chunks\[root-of-the-server]__9cce9403._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:00:14.794] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:00:14.807] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\.next\dev\server\chunks\node_modules_f874dd77._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:00:14.811] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:00:14.814] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:00:14.815] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:00:14.816] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:00:14.817] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:00:14.818] Server  ERROR   C:\Users\Skrimer\Desktop\WEB\testops-site\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:00:14.819] Server  ERROR   Login error: PrismaClientInitializationError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].user.findUnique()` invocation in
+C:\Users\Skrimer\Desktop\WEB\testops-site\.next\dev\server\chunks\[root-of-the-server]__9cce9403._.js:98:155
+
+  95 // Ищем пользователя (или по email, или можно по username докрутить)
+  96 // Здесь упрощенно считаем, что логин = email. 
+  97 // Если хочешь вход по username ИЛИ email, логика чуть сложнее (OR).
+→ 98 const user = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].user.findUnique(
+Can't reach database server at `localhost`:`5432`
+
+Please make sure your database server is running at `localhost`:`5432`.
+[00:00:14.927] Browser ERROR   {}
+[00:03:11.151] Browser LOG     THREE.WebGLRenderer: Context Lost.
+[00:11:47.579] Browser LOG     THREE.WebGLRenderer: Context Lost.
+[00:13:25.612] Server  LOG      ✓ Compiled in 149ms
+[00:13:33.286] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:13:44.458] Browser LOG     THREE.WebGLRenderer: Context Lost.
+[00:13:54.467] Browser LOG     THREE.WebGLRenderer: Context Lost.
+[00:14:01.078] Browser LOG     THREE.WebGLRenderer: Context Lost.
+[00:14:10.070] Browser LOG     THREE.WebGLRenderer: Context Lost.
+[00:18:36.432] Server  LOG      ✓ Compiled in 71ms
+[00:18:39.400] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:18:56.161] Browser LOG     THREE.WebGLRenderer: Context Lost.
+[00:19:08.547] Browser ERROR   Error in chat flow: {}
+[00:19:09.094] Browser LOG     THREE.WebGLRenderer: Context Lost.
+[00:19:47.747] Browser LOG     THREE.WebGLRenderer: Context Lost.
+[00:21:32.968] Browser LOG     THREE.WebGLRenderer: Context Lost.
+[00:27:01.626] Server  LOG      ✓ Compiled in 33ms
+[00:27:50.949] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:28:05.977] Browser LOG     THREE.WebGLRenderer: Context Lost.

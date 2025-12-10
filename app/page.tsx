@@ -11,8 +11,7 @@ import { AuthScreen } from "@/components/ui/auth-screen";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { UserMenu } from "@/components/ui/user-menu";
 import { cn } from "@/lib/utils";
-import { ChevronDown, PanelLeft } from "lucide-react";
-
+import { ChevronDown, PanelLeft, Code2, Terminal } from "lucide-react";
 
 // --- ТИПЫ ---
 type Message = {
@@ -21,17 +20,17 @@ type Message = {
   content: string;
   files?: File[];
   isStreaming?: boolean;
+  // Новые поля для привязки кода
+  attachedCode?: string;
+  attachedFileName?: string;
 };
-
 
 type ChatSession = {
   id: string;
   title: string;
 };
 
-
 type AppPhase = "auth" | "loading" | "app";
-
 
 // --- ЭФФЕКТ ПЕЧАТНОЙ МАШИНКИ ---
 const TypewriterEffect = ({ text, onComplete }: { text: string, onComplete?: () => void }) => {
@@ -54,7 +53,6 @@ const TypewriterEffect = ({ text, onComplete }: { text: string, onComplete?: () 
   return <span className="whitespace-pre-wrap">{displayedText}</span>;
 };
 
-
 // --- ОСНОВНОЙ КОМПОНЕНТ ---
 export default function Home() {
   // --- СОСТОЯНИЯ ПРИЛОЖЕНИЯ ---
@@ -72,6 +70,7 @@ export default function Home() {
   const [activeChatId, setActiveChatId] = useState<string | undefined>(undefined);
   const [chatHistory, setChatHistory] = useState<ChatSession[]>([]);
 
+  // Текущий отображаемый код (в панели)
   const [currentCode, setCurrentCode] = useState("");
   const [currentFileName, setCurrentFileName] = useState("");
   
@@ -90,17 +89,19 @@ export default function Home() {
       const res = await fetch(`/api/chats/${chatId}`);
       if (res.ok) {
         const dbMessages = await res.json();
+        // Мапим сообщения из БД в наш формат с кодом
         setMessages(dbMessages.map((m: any) => ({
             id: m.id,
             role: m.role,
-            content: m.content
+            content: m.content,
+            attachedCode: m.attachedCode || undefined, // Восстанавливаем код
+            attachedFileName: m.attachedFileName || undefined
         })));
       }
     } catch (e) { console.error("Error loading messages", e); }
   };
 
   // --- ЛОГИКА ФАЗ И АВТОРИЗАЦИИ ---
-
   const handleLoginSuccess = (user: any) => {
     if (typeof user === 'object' && user.id) {
         setUsername(user.username);
@@ -140,6 +141,7 @@ export default function Home() {
   const handleSelectChat = (id: string) => {
     setActiveChatId(id);
     setIsChatStarted(true);
+    setIsCodePanelOpen(false);
     setMessages([]); 
     loadMessages(id);
     setIsSidebarOpen(false);
@@ -157,7 +159,14 @@ export default function Home() {
     }
   };
 
-  // --- ОБНОВЛЕННАЯ ЛОГИКА ОТПРАВКИ СООБЩЕНИЯ С РЕЖИМАМИ ---
+  // Функция открытия кода из пузыря сообщения
+  const openCodeFromMessage = (code: string, filename: string) => {
+      setCurrentCode(code);
+      setCurrentFileName(filename);
+      setIsCodePanelOpen(true);
+  };
+
+  // --- ЛОГИКА ОТПРАВКИ СООБЩЕНИЯ ---
   const handleSendMessage = async (
     content: string, 
     files?: File[], 
@@ -178,14 +187,13 @@ export default function Home() {
     let chatIdForSave = activeChatId;
 
     try {
-      // 1. Создаем чат, если его нет
+      // 1. Создание чата
       if (!chatIdForSave && userId !== null) {
           const title = content.slice(0, 30);
           const res = await fetch('/api/chats', {
               method: 'POST',
               body: JSON.stringify({ userId, title })
           });
-          
           if (res.ok) {
               const newChat = await res.json();
               chatIdForSave = newChat.id;
@@ -194,7 +202,7 @@ export default function Home() {
           }
       }
 
-      // 2. Сохраняем сообщение юзера
+      // 2. Сохранение сообщения юзера
       if (chatIdForSave) {
           await fetch(`/api/chats/${chatIdForSave}`, {
             method: 'POST',
@@ -202,17 +210,15 @@ export default function Home() {
           });
       }
 
-      // 3. ВЫБОР ЭНДПОИНТА В ЗАВИСИМОСТИ ОТ РЕЖИМА
-      let apiEndpoint = "/api/generation/ui/full"; // Default (обычный чат)
+      // 3. Выбор эндпоинта
+      let apiEndpoint = "/api/generation/ui/full";
       let requestBody: any = { 
         requirements_text: content,
         url: null, 
         html: null 
       };
 
-      // Маршрутизация по режимам
       if (mode === "search") {
-         // Режим Swagger / API Tests
          apiEndpoint = "/api/proxy/generation/api-vms"; 
          requestBody = {
             swagger_url: content.includes("http") ? content.trim() : null,
@@ -235,15 +241,12 @@ export default function Home() {
                }
            ]
         };
-     } 
+      } 
       else if (mode === "canvas") {
          apiEndpoint = "/api/proxy/requirements/ui";
-         requestBody = {
-            requirements_text: content
-         };
+         requestBody = { requirements_text: content };
       }
 
-      // Выполняем запрос
       const response = await fetch(apiEndpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -256,49 +259,61 @@ export default function Home() {
       }
 
       const data = await response.json();
-      const formattedJson = JSON.stringify(data, null, 2);
       
-      // Формируем красивый ответ
+      // Логика извлечения кода
+      let contentToShow = JSON.stringify(data, null, 2);
+      let fileNameToShow = "generated_result.json";
       let replyText = "✅ Результат генерации:";
+      let hasCode = false;
       
-      if (mode === "canvas" && data.test_cases) {
+      if (mode === "think" && data.pytest_code) {
+          contentToShow = data.pytest_code.replace(/\\n/g, '\n');
+          replyText = `✅ Код автотестов сгенерирован (${data.test_count} тестов).`;
+          fileNameToShow = "autotests_code.py";
+          hasCode = true;
+      } 
+      else if (mode === "canvas" && data.test_cases) {
           replyText = `✅ Сгенерировано ${data.test_cases.length} ручных тест-кейсов из требований.`;
-      } else if (mode === "think" && data.code) {
-          replyText = `✅ Код автотестов сгенерирован.`;
-      } else if (mode === "search") {
+          fileNameToShow = "manual_test_cases.json";
+          hasCode = true;
+      } 
+      else if (mode === "search") {
           replyText = `✅ API тесты из Swagger обработаны.`;
+          fileNameToShow = "api_tests_swagger.json";
+          hasCode = true;
       } else if (data.test_cases && Array.isArray(data.test_cases)) {
           replyText = `✅ Сгенерировано ${data.test_cases.length} тест-кейсов.`;
+          hasCode = true;
       }
 
-      const fullAiContent = `${replyText}\n\n\`\`\`json\n${formattedJson}\n\`\`\``;
-
+      // Обновляем стейт сообщений (добавляем ответ с кодом)
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: fullAiContent,
+        content: replyText,
         isStreaming: false, 
+        attachedCode: hasCode ? contentToShow : undefined,
+        attachedFileName: hasCode ? fileNameToShow : undefined
       };
       
       setMessages((prev) => [...prev, aiMessage]);
-      setCurrentCode(formattedJson);
       
-      // Меняем имя файла в зависимости от режима
-      const fileNameMap: Record<string, string> = {
-          "search": "api_tests_swagger.json",
-          "think": "autotests_code.py",
-          "canvas": "manual_test_cases.json",
-          "default": "generated_result.json"
-      };
-      setCurrentFileName(fileNameMap[mode || "default"]);
-      
-      setIsCodePanelOpen(true);
+      if (hasCode) {
+          setCurrentCode(contentToShow);
+          setCurrentFileName(fileNameToShow);
+          setIsCodePanelOpen(true);
+      }
 
-      // 4. Сохраняем ответ бота
+      // 4. Сохранение ответа ВМЕСТЕ С КОДОМ
       if (chatIdForSave) {
           await fetch(`/api/chats/${chatIdForSave}`, {
             method: 'POST',
-            body: JSON.stringify({ role: 'assistant', content: fullAiContent })
+            body: JSON.stringify({ 
+                role: 'assistant', 
+                content: replyText,
+                attachedCode: hasCode ? contentToShow : null,
+                attachedFileName: hasCode ? fileNameToShow : null
+            })
           });
       }
 
@@ -354,7 +369,7 @@ export default function Home() {
             activeChatId={activeChatId}
           />
 
-          {/* ВЕРХНЯЯ ПАНЕЛЬ (МЕНЮ + ПРОФИЛЬ) */}
+          {/* ВЕРХНЯЯ ПАНЕЛЬ */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -369,6 +384,25 @@ export default function Home() {
             >
               <PanelLeft className="w-6 h-6" />
             </motion.button>
+            
+            {/* Глобальная кнопка кода (открывает ПОСЛЕДНИЙ просмотренный код) */}
+            {currentCode && (
+              <motion.button
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setIsCodePanelOpen(!isCodePanelOpen)}
+                className={cn(
+                  "p-2 border rounded-lg backdrop-blur-md transition-colors",
+                  isCodePanelOpen 
+                    ? "bg-slate-800 border-slate-600 text-white shadow-[0_0_10px_rgba(255,255,255,0.1)]" 
+                    : "bg-slate-900/50 hover:bg-slate-800 border-slate-700/50 text-slate-300"
+                )}
+              >
+                <Code2 className="w-6 h-6" />
+              </motion.button>
+            )}
 
             <UserMenu username={username} onLogout={handleLogout} />
           </motion.div>
@@ -442,7 +476,7 @@ export default function Home() {
                         className={cn("flex w-full", msg.role === "user" ? "justify-end" : "justify-start")}
                       >
                         <div className={cn(
-                          "max-w-[85%] px-5 py-3 rounded-2xl text-base leading-relaxed shadow-sm",
+                          "max-w-[85%] px-5 py-3 rounded-2xl text-base leading-relaxed shadow-sm relative group",
                           msg.role === "user"
                             ? "bg-[#1e40af]/30 text-blue-100 border border-blue-500/20 rounded-br-none"
                             : "bg-slate-900/60 text-slate-200 border border-slate-700/50 rounded-bl-none overflow-x-auto" 
@@ -450,7 +484,22 @@ export default function Home() {
                           {msg.role === "assistant" && msg.isStreaming ? (
                             <TypewriterEffect text={msg.content} />
                           ) : (
-                            <span className="whitespace-pre-wrap">{msg.content}</span>
+                            <div className="flex flex-col gap-2">
+                                <span className="whitespace-pre-wrap">{msg.content}</span>
+                                
+                                {/* КНОПКА ОТКРЫТИЯ КОДА ВНУТРИ СООБЩЕНИЯ */}
+                                {msg.attachedCode && (
+                                    <motion.button
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        onClick={() => openCodeFromMessage(msg.attachedCode!, msg.attachedFileName || "code")}
+                                        className="mt-2 flex items-center gap-2 px-3 py-2 bg-slate-800/80 hover:bg-slate-700 border border-slate-600 rounded-lg text-sm text-sky-400 transition-colors w-fit"
+                                    >
+                                        <Terminal className="w-4 h-4" />
+                                        <span>Открыть {msg.attachedFileName || "код"}</span>
+                                    </motion.button>
+                                )}
+                            </div>
                           )}
                         </div>
                       </motion.div>

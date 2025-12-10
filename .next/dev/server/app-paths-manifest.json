@@ -3,7 +3,6 @@
   "/api/chats/route": "app/api/chats/route.js",
   "/api/generation/ui/full/route": "app/api/generation/ui/full/route.js",
   "/api/login/route": "app/api/login/route.js",
-  "/api/proxy/generation/api-vms/route": "app/api/proxy/generation/api-vms/route.js",
   "/api/proxy/generation/automation/e2e/route": "app/api/proxy/generation/automation/e2e/route.js",
   "/api/proxy/requirements/ui/route": "app/api/proxy/requirements/ui/route.js",
   "/page": "app/page.js"
