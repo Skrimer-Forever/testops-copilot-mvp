@@ -76,6 +76,7 @@
     --color-blue-100: #dbeafe;
     --color-blue-400: #54a2ff;
     --color-blue-500: #3080ff;
+    --color-blue-900: #1c398e;
     --color-slate-200: #e2e8f0;
     --color-slate-300: #cad5e2;
     --color-slate-400: #90a1b9;
@@ -148,6 +149,7 @@
       --color-blue-100: lab(92.0301% -2.24757 -11.6453);
       --color-blue-400: lab(65.0361% -1.42062 -56.9803);
       --color-blue-500: lab(54.1736% 13.3368 -74.6839);
+      --color-blue-900: lab(26.1542% 15.7545 -51.5504);
       --color-slate-200: lab(91.7353% -.998765 -4.76968);
       --color-slate-300: lab(84.7652% -1.94535 -7.93337);
       --color-slate-400: lab(65.5349% -2.25151 -14.5072);
@@ -772,6 +774,10 @@
     min-height: 100vh;
   }
 
+  .w-1\/2 {
+    width: 50%;
+  }
+
   .w-3 {
     width: calc(var(--spacing) * 3);
   }
@@ -1190,6 +1196,16 @@
     }
   }
 
+  .border-red-500\/20 {
+    border-color: #fb2c3633;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .border-red-500\/20 {
+      border-color: color-mix(in oklab, var(--color-red-500) 20%, transparent);
+    }
+  }
+
   .border-red-500\/70 {
     border-color: #fb2c36b3;
   }
@@ -1350,6 +1366,16 @@
     }
   }
 
+  .bg-blue-900\/30 {
+    background-color: #1c398e4d;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .bg-blue-900\/30 {
+      background-color: color-mix(in oklab, var(--color-blue-900) 30%, transparent);
+    }
+  }
+
   .bg-lime-400 {
     background-color: var(--color-lime-400);
   }
@@ -1378,8 +1404,28 @@
     }
   }
 
+  .bg-red-500\/10 {
+    background-color: #fb2c361a;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .bg-red-500\/10 {
+      background-color: color-mix(in oklab, var(--color-red-500) 10%, transparent);
+    }
+  }
+
   .bg-slate-800 {
     background-color: var(--color-slate-800);
+  }
+
+  .bg-slate-800\/60 {
+    background-color: #1d293d99;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .bg-slate-800\/60 {
+      background-color: color-mix(in oklab, var(--color-slate-800) 60%, transparent);
+    }
   }
 
   .bg-slate-800\/80 {

@@ -35,7 +35,7 @@ const TypewriterEffect = ({ text, onComplete }: { text: string, onComplete?: () 
 
   useEffect(() => {
     let i = 0;
-    const speed = 10; // чуть ускорил, чтобы не ждать долго большие JSONы
+    const speed = 10;
     const timer = setInterval(() => {
       if (i < text.length) {
         setDisplayedText((prev) => prev + text.charAt(i));
@@ -55,6 +55,7 @@ export default function Home() {
   // --- СОСТОЯНИЯ ПРИЛОЖЕНИЯ ---
   const [appPhase, setAppPhase] = useState<AppPhase>("auth");
   const [username, setUsername] = useState("User");
+  const [userId, setUserId] = useState<number | null>(null);
 
   // --- СОСТОЯНИЯ ЧАТА ---
   const [isChatStarted, setIsChatStarted] = useState(false);
@@ -64,20 +65,45 @@ export default function Home() {
   
   const [messages, setMessages] = useState<Message[]>([]);
   const [activeChatId, setActiveChatId] = useState<string | undefined>(undefined);
-  const [chatHistory, setChatHistory] = useState<ChatSession[]>([
-    { id: "1", title: "Тест авторизации" },
-    { id: "2", title: "Генерация отчетов" }
-  ]);
+  const [chatHistory, setChatHistory] = useState<ChatSession[]>([]);
 
   const [currentCode, setCurrentCode] = useState("");
   const [currentFileName, setCurrentFileName] = useState("");
   
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // --- API ФУНКЦИИ ---
+  const loadChats = async (uid: number) => {
+    try {
+      const res = await fetch(`/api/chats?userId=${uid}`);
+      if (res.ok) setChatHistory(await res.json());
+    } catch (e) { console.error("Error loading chats", e); }
+  };
+
+  const loadMessages = async (chatId: string) => {
+    try {
+      const res = await fetch(`/api/chats/${chatId}`);
+      if (res.ok) {
+        const dbMessages = await res.json();
+        setMessages(dbMessages.map((m: any) => ({
+            id: m.id,
+            role: m.role,
+            content: m.content
+        })));
+      }
+    } catch (e) { console.error("Error loading messages", e); }
+  };
+
   // --- ЛОГИКА ФАЗ И АВТОРИЗАЦИИ ---
 
-  const handleLoginSuccess = (user: string) => {
-    setUsername(user);
+  const handleLoginSuccess = (user: any) => {
+    if (typeof user === 'object' && user.id) {
+        setUsername(user.username);
+        setUserId(user.id);
+        loadChats(user.id);
+    } else {
+        setUsername(typeof user === 'string' ? user : 'User');
+    }
     setAppPhase("loading");
   };
 
@@ -93,6 +119,7 @@ export default function Home() {
     setActiveChatId(undefined);
     setIsThinking(false);
     setIsSidebarOpen(false);
+    setUserId(null);
     setAppPhase("auth");
   };
 
@@ -108,10 +135,9 @@ export default function Home() {
   const handleSelectChat = (id: string) => {
     setActiveChatId(id);
     setIsChatStarted(true);
-    setMessages([
-      { id: "old1", role: "user", content: `История чата ${id}` },
-      { id: "old2", role: "assistant", content: "Данные загружены." }
-    ]);
+    setMessages([]); 
+    loadMessages(id);
+    setIsSidebarOpen(false);
   };
 
   const handleCloseChat = (e: React.MouseEvent) => {
@@ -126,12 +152,12 @@ export default function Home() {
     }
   };
 
-  // --- ЛОГИКА ОТПРАВКИ СООБЩЕНИЯ (ИНТЕГРАЦИЯ С БЭКОМ) ---
+  // --- ЛОГИКА ОТПРАВКИ СООБЩЕНИЯ (ИНТЕГРАЦИЯ С БЭКОМ И ИСТОРИЕЙ) ---
+  // --- ЛОГИКА ОТПРАВКИ СООБЩЕНИЯ (ИСПРАВЛЕННАЯ) ---
   const handleSendMessage = async (content: string, files?: File[]) => {
     if (!content.trim() && (!files || files.length === 0)) return;
     if (!isChatStarted) setIsChatStarted(true);
 
-    // 1. Сообщение пользователя
     const userMessage: Message = {
       id: Date.now().toString(),
       role: "user",
@@ -139,24 +165,42 @@ export default function Home() {
       files,
     };
     setMessages((prev) => [...prev, userMessage]);
-
     setIsThinking(true);
 
-    if (!activeChatId) {
-      const newId = Date.now().toString();
-      const newTitle = content.slice(0, 30);
-      setChatHistory(prev => [{ id: newId, title: newTitle }, ...prev]);
-      setActiveChatId(newId);
-    }
+    // Локальная переменная для ID чата, чтобы не зависеть от асинхронного стейта
+    let chatIdForSave = activeChatId;
 
     try {
-      // 2. Отправка запроса на бэкенд через Nginx прокси
+      // 1. Создаем чат, если его нет
+      if (!chatIdForSave && userId !== null) {
+          const title = content.slice(0, 30);
+          const res = await fetch('/api/chats', {
+              method: 'POST',
+              body: JSON.stringify({ userId, title })
+          });
+          
+          if (res.ok) {
+              const newChat = await res.json();
+              chatIdForSave = newChat.id; // Запоминаем ID!
+              
+              // Обновляем UI
+              setActiveChatId(newChat.id);
+              setChatHistory(prev => [newChat, ...prev]);
+          }
+      }
+
+      // 2. СОХРАНЯЕМ СООБЩЕНИЕ ЮЗЕРА (теперь точно есть ID)
+      if (chatIdForSave) {
+          await fetch(`/api/chats/${chatIdForSave}`, {
+            method: 'POST',
+            body: JSON.stringify({ role: 'user', content: content })
+          });
+      }
+
+      // 3. Генерация ответа
       const response = await fetch("/api/generation/ui/full", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        // Формат payload согласно твоему Swagger
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           url: null,
           html: null,
@@ -170,37 +214,41 @@ export default function Home() {
       }
 
       const data = await response.json();
-      
-      // 3. Форматируем JSON-ответ для отображения
       const formattedJson = JSON.stringify(data, null, 2);
       
-      // Формируем текст ответа
       let replyText = "Генерация завершена. Результат:";
-      // Если бэк вернул массив тест-кейсов, напишем их количество
       if (data.test_cases && Array.isArray(data.test_cases)) {
           replyText = `Сгенерировано ${data.test_cases.length} тест-кейсов.`;
       }
+      
+      const fullAiContent = `${replyText}\n\n\`\`\`json\n${formattedJson}\n\`\`\``;
 
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: `${replyText}\n\n\`\`\`json\n${formattedJson}\n\`\`\``,
-        isStreaming: false, // Отключим пока стриминг для JSON, чтобы не ломать верстку
+        content: fullAiContent,
+        isStreaming: false, 
       };
       
       setMessages((prev) => [...prev, aiMessage]);
-
-      // 4. Открываем панель кода с результатом
       setCurrentCode(formattedJson);
       setCurrentFileName("generated_tests.json");
       setIsCodePanelOpen(true);
 
+      // 4. СОХРАНЯЕМ ОТВЕТ БОТА
+      if (chatIdForSave) {
+          await fetch(`/api/chats/${chatIdForSave}`, {
+            method: 'POST',
+            body: JSON.stringify({ role: 'assistant', content: fullAiContent })
+          });
+      }
+
     } catch (error: any) {
-      console.error("API Error:", error);
+      console.error("Error in chat flow:", error);
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: `⚠️ Ошибка связи с сервером:\n${error.message}`,
+        content: `⚠️ Ошибка: ${error.message}`,
         isStreaming: false,
       };
       setMessages((prev) => [...prev, errorMessage]);
@@ -247,7 +295,6 @@ export default function Home() {
             activeChatId={activeChatId}
           />
 
-          {/* ВЕРХНЯЯ ПАНЕЛЬ (МЕНЮ + ПРОФИЛЬ) */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -293,7 +340,6 @@ export default function Home() {
               )}
             >
               
-              {/* ЧАТ */}
               <motion.div
                 layout="position"
                 transition={{ type: "spring", damping: 25, stiffness: 120 }}
@@ -337,7 +383,7 @@ export default function Home() {
                           "max-w-[85%] px-5 py-3 rounded-2xl text-base leading-relaxed shadow-sm",
                           msg.role === "user"
                             ? "bg-[#1e40af]/30 text-blue-100 border border-blue-500/20 rounded-br-none"
-                            : "bg-[#1e293b]/60 text-slate-200 border border-slate-700/50 rounded-bl-none overflow-x-auto" // добавил overflow для кода
+                            : "bg-[#1e293b]/60 text-slate-200 border border-slate-700/50 rounded-bl-none overflow-x-auto" 
                         )}>
                           {msg.role === "assistant" && msg.isStreaming ? (
                             <TypewriterEffect text={msg.content} />

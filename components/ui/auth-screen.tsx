@@ -6,29 +6,66 @@ import { ArrowRight, User, Mail, Lock, Fingerprint } from "lucide-react";
 import { AuthBackground } from "@/components/ui/auth-background";
 
 interface AuthScreenProps {
-  // Теперь принимаем строку (username)
-  onLoginSuccess: (username: string) => void;
+  onLoginSuccess: (user: any) => void;
 }
 
 export const AuthScreen = ({ onLoginSuccess }: AuthScreenProps) => {
   const [mode, setMode] = useState<"login" | "register">("login");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null); // Для показа ошибок
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError(null);
 
-    setTimeout(() => {
+    const endpoint = mode === "login" ? "/api/login" : "/api/register";
+    
+    // Формируем payload
+    const body: any = { email, password };
+    if (mode === "register") {
+      body.username = username;
+    }
+
+    try {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        // Если ошибка от сервера (400, 401, 500)
+        throw new Error(data.message || "Ошибка при авторизации");
+      }
+
+      // Успех!
+      // data.user должен прийти с бэка
+      const userDisplay = data.user?.username || data.user?.email || "User";
+      
+      // Можно сохранить в localStorage, чтобы при F5 не вылетало
+      // localStorage.setItem("testops_user", JSON.stringify(data.user));
+
+      onLoginSuccess(userDisplay);
+      if (data.user) {
+        onLoginSuccess(data.user); 
+    } else {
+        // Фоллбэк
+        onLoginSuccess({ username: userDisplay, id: 0 }); 
+    }
+
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message);
+    } finally {
       setIsLoading(false);
-      // Если есть username (регистрация), берем его. 
-      // Если логин (email) - берем часть до @ или просто email.
-      const displayUser = username || email.split('@')[0] || "User";
-      onLoginSuccess(displayUser);
-    }, 1500);
+    }
   };
 
   return (
@@ -67,7 +104,7 @@ export const AuthScreen = ({ onLoginSuccess }: AuthScreenProps) => {
 
           <motion.div layout className="flex bg-slate-900/40 p-1 rounded-xl mb-6 border border-white/5 relative z-10">
             <button
-              onClick={() => setMode("login")}
+              onClick={() => { setMode("login"); setError(null); }}
               className={cn(
                 "flex-1 py-2 text-sm font-medium rounded-lg transition-all duration-300",
                 mode === "login" ? "bg-slate-800/80 text-white shadow-sm border border-white/10" : "text-slate-400 hover:text-white"
@@ -76,7 +113,7 @@ export const AuthScreen = ({ onLoginSuccess }: AuthScreenProps) => {
               Вход
             </button>
             <button
-              onClick={() => setMode("register")}
+              onClick={() => { setMode("register"); setError(null); }}
               className={cn(
                 "flex-1 py-2 text-sm font-medium rounded-lg transition-all duration-300",
                 mode === "register" ? "bg-slate-800/80 text-white shadow-sm border border-white/10" : "text-slate-400 hover:text-white"
@@ -85,6 +122,20 @@ export const AuthScreen = ({ onLoginSuccess }: AuthScreenProps) => {
               Регистрация
             </button>
           </motion.div>
+
+          {/* Блок ошибки */}
+          <AnimatePresence>
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, height: 0, mb: 0 }}
+                animate={{ opacity: 1, height: "auto", marginBottom: 16 }}
+                exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                className="bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-2 text-red-400 text-sm text-center"
+              >
+                {error}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <form onSubmit={handleSubmit} className="space-y-4 relative z-10">
             <AnimatePresence initial={false}>
@@ -117,16 +168,16 @@ export const AuthScreen = ({ onLoginSuccess }: AuthScreenProps) => {
             <motion.div layout className="space-y-4">
               <div className="space-y-1">
                 <label className="text-xs font-medium text-slate-400 ml-1">
-                  {mode === "login" ? "Email или логин" : "Email"}
+                  {mode === "login" ? "Email" : "Email"}
                 </label>
                 <div className="relative group">
                   <Mail className="absolute left-3 top-3 w-5 h-5 text-slate-500 group-focus-within:text-lime-400 transition-colors" />
                   <input
-                    type="text"
+                    type="email" // Важно: type="email" для валидации браузером
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder={mode === "login" ? "name@example.com" : "name@example.com"}
+                    placeholder="name@example.com"
                     className="w-full bg-slate-900/50 border border-white/10 rounded-xl px-10 py-2.5 text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-lime-500/50 focus:ring-1 focus:ring-lime-500/50 transition-all"
                   />
                 </div>

@@ -2028,33 +2028,71 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$auth$2d$
 const AuthScreen = ({ onLoginSuccess })=>{
     const [mode, setMode] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("login");
     const [isLoading, setIsLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
+    const [error, setError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null); // Для показа ошибок
     const [email, setEmail] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
     const [password, setPassword] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
     const [username, setUsername] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
-    const handleSubmit = (e)=>{
+    const handleSubmit = async (e)=>{
         e.preventDefault();
         setIsLoading(true);
-        setTimeout(()=>{
+        setError(null);
+        const endpoint = mode === "login" ? "/api/login" : "/api/register";
+        // Формируем payload
+        const body = {
+            email,
+            password
+        };
+        if (mode === "register") {
+            body.username = username;
+        }
+        try {
+            const res = await fetch(endpoint, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(body)
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                // Если ошибка от сервера (400, 401, 500)
+                throw new Error(data.message || "Ошибка при авторизации");
+            }
+            // Успех!
+            // data.user должен прийти с бэка
+            const userDisplay = data.user?.username || data.user?.email || "User";
+            // Можно сохранить в localStorage, чтобы при F5 не вылетало
+            // localStorage.setItem("testops_user", JSON.stringify(data.user));
+            onLoginSuccess(userDisplay);
+            if (data.user) {
+                onLoginSuccess(data.user);
+            } else {
+                // Фоллбэк
+                onLoginSuccess({
+                    username: userDisplay,
+                    id: 0
+                });
+            }
+        } catch (err) {
+            console.error(err);
+            setError(err.message);
+        } finally{
             setIsLoading(false);
-            // Если есть username (регистрация), берем его. 
-            // Если логин (email) - берем часть до @ или просто email.
-            const displayUser = username || email.split('@')[0] || "User";
-            onLoginSuccess(displayUser);
-        }, 1500);
+        }
     };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "relative flex min-h-screen w-full items-center justify-center bg-black text-white overflow-hidden",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$auth$2d$background$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AuthBackground"], {}, void 0, false, {
                 fileName: "[project]/components/ui/auth-screen.tsx",
-                lineNumber: 36,
+                lineNumber: 73,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "absolute inset-0 bg-black/20 z-0 pointer-events-none"
             }, void 0, false, {
                 fileName: "[project]/components/ui/auth-screen.tsx",
-                lineNumber: 37,
+                lineNumber: 74,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -2085,14 +2123,14 @@ const AuthScreen = ({ onLoginSuccess })=>{
                             className: "absolute top-0 left-1/2 -translate-x-1/2 w-32 h-1 bg-lime-500 rounded-b-full blur-[2px]"
                         }, void 0, false, {
                             fileName: "[project]/components/ui/auth-screen.tsx",
-                            lineNumber: 51,
+                            lineNumber: 88,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: "absolute top-0 left-1/2 -translate-x-1/2 w-20 h-20 bg-lime-500/10 blur-3xl rounded-full"
                         }, void 0, false, {
                             fileName: "[project]/components/ui/auth-screen.tsx",
-                            lineNumber: 52,
+                            lineNumber: 89,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -2104,7 +2142,7 @@ const AuthScreen = ({ onLoginSuccess })=>{
                                     children: "TestOps Assistant"
                                 }, void 0, false, {
                                     fileName: "[project]/components/ui/auth-screen.tsx",
-                                    lineNumber: 55,
+                                    lineNumber: 92,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].p, {
@@ -2120,13 +2158,13 @@ const AuthScreen = ({ onLoginSuccess })=>{
                                     children: mode === "login" ? "Добро пожаловать обратно" : "Создайте аккаунт для начала работы"
                                 }, mode, false, {
                                     fileName: "[project]/components/ui/auth-screen.tsx",
-                                    lineNumber: 58,
+                                    lineNumber: 95,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/ui/auth-screen.tsx",
-                            lineNumber: 54,
+                            lineNumber: 91,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -2134,27 +2172,62 @@ const AuthScreen = ({ onLoginSuccess })=>{
                             className: "flex bg-slate-900/40 p-1 rounded-xl mb-6 border border-white/5 relative z-10",
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                    onClick: ()=>setMode("login"),
+                                    onClick: ()=>{
+                                        setMode("login");
+                                        setError(null);
+                                    },
                                     className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$utils$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["cn"])("flex-1 py-2 text-sm font-medium rounded-lg transition-all duration-300", mode === "login" ? "bg-slate-800/80 text-white shadow-sm border border-white/10" : "text-slate-400 hover:text-white"),
                                     children: "Вход"
                                 }, void 0, false, {
                                     fileName: "[project]/components/ui/auth-screen.tsx",
-                                    lineNumber: 69,
+                                    lineNumber: 106,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                    onClick: ()=>setMode("register"),
+                                    onClick: ()=>{
+                                        setMode("register");
+                                        setError(null);
+                                    },
                                     className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$utils$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["cn"])("flex-1 py-2 text-sm font-medium rounded-lg transition-all duration-300", mode === "register" ? "bg-slate-800/80 text-white shadow-sm border border-white/10" : "text-slate-400 hover:text-white"),
                                     children: "Регистрация"
                                 }, void 0, false, {
                                     fileName: "[project]/components/ui/auth-screen.tsx",
-                                    lineNumber: 78,
+                                    lineNumber: 115,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/ui/auth-screen.tsx",
-                            lineNumber: 68,
+                            lineNumber: 105,
+                            columnNumber: 11
+                        }, ("TURBOPACK compile-time value", void 0)),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$components$2f$AnimatePresence$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AnimatePresence"], {
+                            children: error && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
+                                initial: {
+                                    opacity: 0,
+                                    height: 0,
+                                    mb: 0
+                                },
+                                animate: {
+                                    opacity: 1,
+                                    height: "auto",
+                                    marginBottom: 16
+                                },
+                                exit: {
+                                    opacity: 0,
+                                    height: 0,
+                                    marginBottom: 0
+                                },
+                                className: "bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-2 text-red-400 text-sm text-center",
+                                children: error
+                            }, void 0, false, {
+                                fileName: "[project]/components/ui/auth-screen.tsx",
+                                lineNumber: 129,
+                                columnNumber: 15
+                            }, ("TURBOPACK compile-time value", void 0))
+                        }, void 0, false, {
+                            fileName: "[project]/components/ui/auth-screen.tsx",
+                            lineNumber: 127,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -2196,7 +2269,7 @@ const AuthScreen = ({ onLoginSuccess })=>{
                                                     children: "Имя пользователя"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/ui/auth-screen.tsx",
-                                                    lineNumber: 100,
+                                                    lineNumber: 151,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2206,7 +2279,7 @@ const AuthScreen = ({ onLoginSuccess })=>{
                                                             className: "absolute left-3 top-3 w-5 h-5 text-slate-500 group-focus-within:text-lime-400 transition-colors"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/ui/auth-screen.tsx",
-                                                            lineNumber: 102,
+                                                            lineNumber: 153,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -2218,29 +2291,29 @@ const AuthScreen = ({ onLoginSuccess })=>{
                                                             className: "w-full bg-slate-900/50 border border-white/10 rounded-xl px-10 py-2.5 text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-lime-500/50 focus:ring-1 focus:ring-lime-500/50 transition-all"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/ui/auth-screen.tsx",
-                                                            lineNumber: 103,
+                                                            lineNumber: 154,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/ui/auth-screen.tsx",
-                                                    lineNumber: 101,
+                                                    lineNumber: 152,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/ui/auth-screen.tsx",
-                                            lineNumber: 99,
+                                            lineNumber: 150,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     }, void 0, false, {
                                         fileName: "[project]/components/ui/auth-screen.tsx",
-                                        lineNumber: 92,
+                                        lineNumber: 143,
                                         columnNumber: 17
                                     }, ("TURBOPACK compile-time value", void 0))
                                 }, void 0, false, {
                                     fileName: "[project]/components/ui/auth-screen.tsx",
-                                    lineNumber: 90,
+                                    lineNumber: 141,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -2252,10 +2325,10 @@ const AuthScreen = ({ onLoginSuccess })=>{
                                             children: [
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                                     className: "text-xs font-medium text-slate-400 ml-1",
-                                                    children: mode === "login" ? "Email или логин" : "Email"
+                                                    children: mode === "login" ? "Email" : "Email"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/ui/auth-screen.tsx",
-                                                    lineNumber: 119,
+                                                    lineNumber: 170,
                                                     columnNumber: 17
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2265,31 +2338,31 @@ const AuthScreen = ({ onLoginSuccess })=>{
                                                             className: "absolute left-3 top-3 w-5 h-5 text-slate-500 group-focus-within:text-lime-400 transition-colors"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/ui/auth-screen.tsx",
-                                                            lineNumber: 123,
+                                                            lineNumber: 174,
                                                             columnNumber: 19
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                                                            type: "text",
+                                                            type: "email",
                                                             required: true,
                                                             value: email,
                                                             onChange: (e)=>setEmail(e.target.value),
-                                                            placeholder: mode === "login" ? "name@example.com" : "name@example.com",
+                                                            placeholder: "name@example.com",
                                                             className: "w-full bg-slate-900/50 border border-white/10 rounded-xl px-10 py-2.5 text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-lime-500/50 focus:ring-1 focus:ring-lime-500/50 transition-all"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/ui/auth-screen.tsx",
-                                                            lineNumber: 124,
+                                                            lineNumber: 175,
                                                             columnNumber: 19
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/ui/auth-screen.tsx",
-                                                    lineNumber: 122,
+                                                    lineNumber: 173,
                                                     columnNumber: 17
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/ui/auth-screen.tsx",
-                                            lineNumber: 118,
+                                            lineNumber: 169,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2300,7 +2373,7 @@ const AuthScreen = ({ onLoginSuccess })=>{
                                                     children: "Пароль"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/ui/auth-screen.tsx",
-                                                    lineNumber: 136,
+                                                    lineNumber: 187,
                                                     columnNumber: 17
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2310,7 +2383,7 @@ const AuthScreen = ({ onLoginSuccess })=>{
                                                             className: "absolute left-3 top-3 w-5 h-5 text-slate-500 group-focus-within:text-lime-400 transition-colors"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/ui/auth-screen.tsx",
-                                                            lineNumber: 138,
+                                                            lineNumber: 189,
                                                             columnNumber: 19
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -2322,25 +2395,25 @@ const AuthScreen = ({ onLoginSuccess })=>{
                                                             className: "w-full bg-slate-900/50 border border-white/10 rounded-xl px-10 py-2.5 text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-lime-500/50 focus:ring-1 focus:ring-lime-500/50 transition-all"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/ui/auth-screen.tsx",
-                                                            lineNumber: 139,
+                                                            lineNumber: 190,
                                                             columnNumber: 19
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/ui/auth-screen.tsx",
-                                                    lineNumber: 137,
+                                                    lineNumber: 188,
                                                     columnNumber: 17
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/ui/auth-screen.tsx",
-                                            lineNumber: 135,
+                                            lineNumber: 186,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/ui/auth-screen.tsx",
-                                    lineNumber: 117,
+                                    lineNumber: 168,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].button, {
@@ -2352,7 +2425,7 @@ const AuthScreen = ({ onLoginSuccess })=>{
                                         className: "w-5 h-5 border-2 border-slate-900 border-t-transparent rounded-full animate-spin"
                                     }, void 0, false, {
                                         fileName: "[project]/components/ui/auth-screen.tsx",
-                                        lineNumber: 158,
+                                        lineNumber: 209,
                                         columnNumber: 17
                                     }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
                                         children: [
@@ -2361,20 +2434,20 @@ const AuthScreen = ({ onLoginSuccess })=>{
                                                 className: "w-4 h-4"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/ui/auth-screen.tsx",
-                                                lineNumber: 162,
+                                                lineNumber: 213,
                                                 columnNumber: 19
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true)
                                 }, void 0, false, {
                                     fileName: "[project]/components/ui/auth-screen.tsx",
-                                    lineNumber: 151,
+                                    lineNumber: 202,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/ui/auth-screen.tsx",
-                            lineNumber: 89,
+                            lineNumber: 140,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -2387,36 +2460,36 @@ const AuthScreen = ({ onLoginSuccess })=>{
                                         className: "w-3 h-3"
                                     }, void 0, false, {
                                         fileName: "[project]/components/ui/auth-screen.tsx",
-                                        lineNumber: 170,
+                                        lineNumber: 221,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     "Secured by TestOps Security"
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/ui/auth-screen.tsx",
-                                lineNumber: 169,
+                                lineNumber: 220,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
                         }, void 0, false, {
                             fileName: "[project]/components/ui/auth-screen.tsx",
-                            lineNumber: 168,
+                            lineNumber: 219,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/ui/auth-screen.tsx",
-                    lineNumber: 49,
+                    lineNumber: 86,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0))
             }, void 0, false, {
                 fileName: "[project]/components/ui/auth-screen.tsx",
-                lineNumber: 39,
+                lineNumber: 76,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0))
         ]
     }, void 0, true, {
         fileName: "[project]/components/ui/auth-screen.tsx",
-        lineNumber: 35,
+        lineNumber: 72,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };
@@ -2870,7 +2943,7 @@ const TypewriterEffect = ({ text, onComplete })=>{
     const [displayedText, setDisplayedText] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         let i = 0;
-        const speed = 10; // чуть ускорил, чтобы не ждать долго большие JSONы
+        const speed = 10;
         const timer = setInterval(()=>{
             if (i < text.length) {
                 setDisplayedText((prev)=>prev + text.charAt(i));
@@ -2898,6 +2971,7 @@ function Home() {
     // --- СОСТОЯНИЯ ПРИЛОЖЕНИЯ ---
     const [appPhase, setAppPhase] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("auth");
     const [username, setUsername] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("User");
+    const [userId, setUserId] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     // --- СОСТОЯНИЯ ЧАТА ---
     const [isChatStarted, setIsChatStarted] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [isCodePanelOpen, setIsCodePanelOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
@@ -2905,22 +2979,43 @@ function Home() {
     const [isSidebarOpen, setIsSidebarOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [messages, setMessages] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     const [activeChatId, setActiveChatId] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(undefined);
-    const [chatHistory, setChatHistory] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([
-        {
-            id: "1",
-            title: "Тест авторизации"
-        },
-        {
-            id: "2",
-            title: "Генерация отчетов"
-        }
-    ]);
+    const [chatHistory, setChatHistory] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     const [currentCode, setCurrentCode] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
     const [currentFileName, setCurrentFileName] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
     const scrollRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(null);
+    // --- API ФУНКЦИИ ---
+    const loadChats = async (uid)=>{
+        try {
+            const res = await fetch(`/api/chats?userId=${uid}`);
+            if (res.ok) setChatHistory(await res.json());
+        } catch (e) {
+            console.error("Error loading chats", e);
+        }
+    };
+    const loadMessages = async (chatId)=>{
+        try {
+            const res = await fetch(`/api/chats/${chatId}`);
+            if (res.ok) {
+                const dbMessages = await res.json();
+                setMessages(dbMessages.map((m)=>({
+                        id: m.id,
+                        role: m.role,
+                        content: m.content
+                    })));
+            }
+        } catch (e) {
+            console.error("Error loading messages", e);
+        }
+    };
     // --- ЛОГИКА ФАЗ И АВТОРИЗАЦИИ ---
     const handleLoginSuccess = (user)=>{
-        setUsername(user);
+        if (typeof user === 'object' && user.id) {
+            setUsername(user.username);
+            setUserId(user.id);
+            loadChats(user.id);
+        } else {
+            setUsername(typeof user === 'string' ? user : 'User');
+        }
         setAppPhase("loading");
     };
     const handleLoadingComplete = ()=>{
@@ -2934,6 +3029,7 @@ function Home() {
         setActiveChatId(undefined);
         setIsThinking(false);
         setIsSidebarOpen(false);
+        setUserId(null);
         setAppPhase("auth");
     };
     const handleNewChat = ()=>{
@@ -2947,18 +3043,9 @@ function Home() {
     const handleSelectChat = (id)=>{
         setActiveChatId(id);
         setIsChatStarted(true);
-        setMessages([
-            {
-                id: "old1",
-                role: "user",
-                content: `История чата ${id}`
-            },
-            {
-                id: "old2",
-                role: "assistant",
-                content: "Данные загружены."
-            }
-        ]);
+        setMessages([]);
+        loadMessages(id);
+        setIsSidebarOpen(false);
     };
     const handleCloseChat = (e)=>{
         e.stopPropagation();
@@ -2970,11 +3057,11 @@ function Home() {
             setIsChatStarted(true);
         }
     };
-    // --- ЛОГИКА ОТПРАВКИ СООБЩЕНИЯ (ИНТЕГРАЦИЯ С БЭКОМ) ---
+    // --- ЛОГИКА ОТПРАВКИ СООБЩЕНИЯ (ИНТЕГРАЦИЯ С БЭКОМ И ИСТОРИЕЙ) ---
+    // --- ЛОГИКА ОТПРАВКИ СООБЩЕНИЯ (ИСПРАВЛЕННАЯ) ---
     const handleSendMessage = async (content, files)=>{
         if (!content.trim() && (!files || files.length === 0)) return;
         if (!isChatStarted) setIsChatStarted(true);
-        // 1. Сообщение пользователя
         const userMessage = {
             id: Date.now().toString(),
             role: "user",
@@ -2986,26 +3073,46 @@ function Home() {
                 userMessage
             ]);
         setIsThinking(true);
-        if (!activeChatId) {
-            const newId = Date.now().toString();
-            const newTitle = content.slice(0, 30);
-            setChatHistory((prev)=>[
-                    {
-                        id: newId,
-                        title: newTitle
-                    },
-                    ...prev
-                ]);
-            setActiveChatId(newId);
-        }
+        // Локальная переменная для ID чата, чтобы не зависеть от асинхронного стейта
+        let chatIdForSave = activeChatId;
         try {
-            // 2. Отправка запроса на бэкенд через Nginx прокси
+            // 1. Создаем чат, если его нет
+            if (!chatIdForSave && userId !== null) {
+                const title = content.slice(0, 30);
+                const res = await fetch('/api/chats', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        userId,
+                        title
+                    })
+                });
+                if (res.ok) {
+                    const newChat = await res.json();
+                    chatIdForSave = newChat.id; // Запоминаем ID!
+                    // Обновляем UI
+                    setActiveChatId(newChat.id);
+                    setChatHistory((prev)=>[
+                            newChat,
+                            ...prev
+                        ]);
+                }
+            }
+            // 2. СОХРАНЯЕМ СООБЩЕНИЕ ЮЗЕРА (теперь точно есть ID)
+            if (chatIdForSave) {
+                await fetch(`/api/chats/${chatIdForSave}`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        role: 'user',
+                        content: content
+                    })
+                });
+            }
+            // 3. Генерация ответа
             const response = await fetch("/api/generation/ui/full", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                // Формат payload согласно твоему Swagger
                 body: JSON.stringify({
                     url: null,
                     html: null,
@@ -3017,34 +3124,41 @@ function Home() {
                 throw new Error(`Server Error: ${response.status} ${errorText}`);
             }
             const data = await response.json();
-            // 3. Форматируем JSON-ответ для отображения
             const formattedJson = JSON.stringify(data, null, 2);
-            // Формируем текст ответа
             let replyText = "Генерация завершена. Результат:";
-            // Если бэк вернул массив тест-кейсов, напишем их количество
             if (data.test_cases && Array.isArray(data.test_cases)) {
                 replyText = `Сгенерировано ${data.test_cases.length} тест-кейсов.`;
             }
+            const fullAiContent = `${replyText}\n\n\`\`\`json\n${formattedJson}\n\`\`\``;
             const aiMessage = {
                 id: (Date.now() + 1).toString(),
                 role: "assistant",
-                content: `${replyText}\n\n\`\`\`json\n${formattedJson}\n\`\`\``,
+                content: fullAiContent,
                 isStreaming: false
             };
             setMessages((prev)=>[
                     ...prev,
                     aiMessage
                 ]);
-            // 4. Открываем панель кода с результатом
             setCurrentCode(formattedJson);
             setCurrentFileName("generated_tests.json");
             setIsCodePanelOpen(true);
+            // 4. СОХРАНЯЕМ ОТВЕТ БОТА
+            if (chatIdForSave) {
+                await fetch(`/api/chats/${chatIdForSave}`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        role: 'assistant',
+                        content: fullAiContent
+                    })
+                });
+            }
         } catch (error) {
-            console.error("API Error:", error);
+            console.error("Error in chat flow:", error);
             const errorMessage = {
                 id: (Date.now() + 1).toString(),
                 role: "assistant",
-                content: `⚠️ Ошибка связи с сервером:\n${error.message}`,
+                content: `⚠️ Ошибка: ${error.message}`,
                 isStreaming: false
             };
             setMessages((prev)=>[
@@ -3084,32 +3198,32 @@ function Home() {
                             onLoginSuccess: handleLoginSuccess
                         }, void 0, false, {
                             fileName: "[project]/app/page.tsx",
-                            lineNumber: 229,
+                            lineNumber: 277,
                             columnNumber: 13
                         }, this)
                     }, "auth", false, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 224,
+                        lineNumber: 272,
                         columnNumber: 11
                     }, this),
                     appPhase === "loading" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$loading$2d$screen$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["LoadingScreen"], {
                         onComplete: handleLoadingComplete
                     }, "loading", false, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 234,
+                        lineNumber: 282,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 222,
+                lineNumber: 270,
                 columnNumber: 7
             }, this),
             appPhase === "app" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$lamp$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["LampContainer"], {
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$background$2d$shader$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["BackgroundShader"], {}, void 0, false, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 239,
+                        lineNumber: 287,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$chat$2d$sidebar$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["ChatSidebar"], {
@@ -3121,7 +3235,7 @@ function Home() {
                         activeChatId: activeChatId
                     }, void 0, false, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 241,
+                        lineNumber: 289,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -3151,12 +3265,12 @@ function Home() {
                                     className: "w-6 h-6"
                                 }, void 0, false, {
                                     fileName: "[project]/app/page.tsx",
-                                    lineNumber: 263,
+                                    lineNumber: 310,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 257,
+                                lineNumber: 304,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$user$2d$menu$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["UserMenu"], {
@@ -3164,13 +3278,13 @@ function Home() {
                                 onLogout: handleLogout
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 266,
+                                lineNumber: 313,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 251,
+                        lineNumber: 298,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3201,24 +3315,24 @@ function Home() {
                                             "TestOps ",
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("br", {}, void 0, false, {
                                                 fileName: "[project]/app/page.tsx",
-                                                lineNumber: 281,
+                                                lineNumber: 328,
                                                 columnNumber: 29
                                             }, this),
                                             " Assistant"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/page.tsx",
-                                        lineNumber: 280,
+                                        lineNumber: 327,
                                         columnNumber: 19
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/page.tsx",
-                                    lineNumber: 273,
+                                    lineNumber: 320,
                                     columnNumber: 17
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 271,
+                                lineNumber: 318,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -3247,12 +3361,12 @@ function Home() {
                                                     className: "w-5 h-5"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/page.tsx",
-                                                    lineNumber: 317,
+                                                    lineNumber: 363,
                                                     columnNumber: 23
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/page.tsx",
-                                                lineNumber: 311,
+                                                lineNumber: 357,
                                                 columnNumber: 21
                                             }, this),
                                             isChatStarted && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -3279,30 +3393,29 @@ function Home() {
                                                             },
                                                             className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$utils$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["cn"])("flex w-full", msg.role === "user" ? "justify-end" : "justify-start"),
                                                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$utils$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["cn"])("max-w-[85%] px-5 py-3 rounded-2xl text-base leading-relaxed shadow-sm", msg.role === "user" ? "bg-[#1e40af]/30 text-blue-100 border border-blue-500/20 rounded-br-none" : "bg-[#1e293b]/60 text-slate-200 border border-slate-700/50 rounded-bl-none overflow-x-auto" // добавил overflow для кода
-                                                                ),
+                                                                className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$utils$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["cn"])("max-w-[85%] px-5 py-3 rounded-2xl text-base leading-relaxed shadow-sm", msg.role === "user" ? "bg-[#1e40af]/30 text-blue-100 border border-blue-500/20 rounded-br-none" : "bg-[#1e293b]/60 text-slate-200 border border-slate-700/50 rounded-bl-none overflow-x-auto"),
                                                                 children: msg.role === "assistant" && msg.isStreaming ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(TypewriterEffect, {
                                                                     text: msg.content
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/page.tsx",
-                                                                    lineNumber: 343,
+                                                                    lineNumber: 389,
                                                                     columnNumber: 29
                                                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                     className: "whitespace-pre-wrap",
                                                                     children: msg.content
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/page.tsx",
-                                                                    lineNumber: 345,
+                                                                    lineNumber: 391,
                                                                     columnNumber: 29
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/page.tsx",
-                                                                lineNumber: 336,
+                                                                lineNumber: 382,
                                                                 columnNumber: 25
                                                             }, this)
                                                         }, msg.id, false, {
                                                             fileName: "[project]/app/page.tsx",
-                                                            lineNumber: 330,
+                                                            lineNumber: 376,
                                                             columnNumber: 23
                                                         }, this)),
                                                     isThinking && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -3337,7 +3450,7 @@ function Home() {
                                                                     children: "Думаю..."
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/page.tsx",
-                                                                    lineNumber: 358,
+                                                                    lineNumber: 404,
                                                                     columnNumber: 29
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3346,29 +3459,29 @@ function Home() {
                                                                         className: "w-full h-full"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/page.tsx",
-                                                                        lineNumber: 366,
+                                                                        lineNumber: 412,
                                                                         columnNumber: 33
                                                                     }, this)
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/page.tsx",
-                                                                    lineNumber: 365,
+                                                                    lineNumber: 411,
                                                                     columnNumber: 29
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/app/page.tsx",
-                                                            lineNumber: 357,
+                                                            lineNumber: 403,
                                                             columnNumber: 27
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/page.tsx",
-                                                        lineNumber: 352,
+                                                        lineNumber: 398,
                                                         columnNumber: 23
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/page.tsx",
-                                                lineNumber: 322,
+                                                lineNumber: 368,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -3382,18 +3495,18 @@ function Home() {
                                                     className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$utils$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["cn"])(isChatStarted ? "border-slate-700 shadow-none bg-slate-900/50" : "bg-slate-950/30 backdrop-blur-md border-slate-700/30 shadow-2xl hover:bg-slate-950/50 transition-colors")
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/page.tsx",
-                                                    lineNumber: 379,
+                                                    lineNumber: 425,
                                                     columnNumber: 19
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/page.tsx",
-                                                lineNumber: 374,
+                                                lineNumber: 420,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/page.tsx",
-                                        lineNumber: 297,
+                                        lineNumber: 343,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$components$2f$AnimatePresence$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AnimatePresence"], {
@@ -3426,41 +3539,41 @@ function Home() {
                                                 onClose: ()=>setIsCodePanelOpen(false)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/page.tsx",
-                                                lineNumber: 401,
+                                                lineNumber: 447,
                                                 columnNumber: 21
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/page.tsx",
-                                            lineNumber: 394,
+                                            lineNumber: 440,
                                             columnNumber: 19
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/page.tsx",
-                                        lineNumber: 392,
+                                        lineNumber: 438,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 286,
+                                lineNumber: 333,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 269,
+                        lineNumber: 316,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 238,
+                lineNumber: 286,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/page.tsx",
-        lineNumber: 221,
+        lineNumber: 269,
         columnNumber: 5
     }, this);
 }
