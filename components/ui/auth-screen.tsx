@@ -12,7 +12,7 @@ interface AuthScreenProps {
 export const AuthScreen = ({ onLoginSuccess }: AuthScreenProps) => {
   const [mode, setMode] = useState<"login" | "register">("login");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null); // Для показа ошибок
+  const [error, setError] = useState<string | null>(null);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,17 +41,9 @@ export const AuthScreen = ({ onLoginSuccess }: AuthScreenProps) => {
       const data = await res.json();
 
       if (!res.ok) {
-        // Если ошибка от сервера (400, 401, 500)
         throw new Error(data.message || "Ошибка при авторизации");
       }
-
-      // Успех!
-      // data.user должен прийти с бэка
       const userDisplay = data.user?.username || data.user?.email || "User";
-      
-      // Можно сохранить в localStorage, чтобы при F5 не вылетало
-      // localStorage.setItem("testops_user", JSON.stringify(data.user));
-
       onLoginSuccess(userDisplay);
       if (data.user) {
         onLoginSuccess(data.user); 
@@ -127,7 +119,7 @@ export const AuthScreen = ({ onLoginSuccess }: AuthScreenProps) => {
           <AnimatePresence>
             {error && (
               <motion.div
-                initial={{ opacity: 0, height: 0, mb: 0 }}
+              initial={{ opacity: 0, height: 0, marginBottom: 0 }}
                 animate={{ opacity: 1, height: "auto", marginBottom: 16 }}
                 exit={{ opacity: 0, height: 0, marginBottom: 0 }}
                 className="bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-2 text-red-400 text-sm text-center"
