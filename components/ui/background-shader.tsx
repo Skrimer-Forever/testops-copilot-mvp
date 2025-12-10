@@ -1,8 +1,6 @@
 "use client";
 import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
-
-// Шейдер для ОСНОВНОГО сайта (медленный, без черной дыры в центре)
 export const BackgroundShader = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -105,7 +103,7 @@ export const BackgroundShader = () => {
     scene.add(mesh);
 
     let frameId: number;
-    const SPEED = 0.002; // Медленная скорость
+    const SPEED = 0.002;
 
     const animate = () => {
       material.uniforms.iTime.value += SPEED;

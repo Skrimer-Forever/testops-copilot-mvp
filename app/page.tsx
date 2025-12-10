@@ -9,10 +9,11 @@ import { BackgroundShader } from "@/components/ui/background-shader";
 import { ChatSidebar } from "@/components/ui/chat-sidebar";
 import { AuthScreen } from "@/components/ui/auth-screen";
 import { LoadingScreen } from "@/components/ui/loading-screen";
-import { UserMenu } from "@/components/ui/user-menu"; // Меню профиля
+import { UserMenu } from "@/components/ui/user-menu";
 import { cn } from "@/lib/utils";
 import { ChevronDown, PanelLeft } from "lucide-react";
 
+// --- ТИПЫ ---
 type Message = {
   id: string;
   role: "user" | "assistant";
@@ -26,15 +27,15 @@ type ChatSession = {
   title: string;
 };
 
-// Фазы работы приложения
 type AppPhase = "auth" | "loading" | "app";
 
+// --- ЭФФЕКТ ПЕЧАТНОЙ МАШИНКИ ---
 const TypewriterEffect = ({ text, onComplete }: { text: string, onComplete?: () => void }) => {
   const [displayedText, setDisplayedText] = useState("");
 
   useEffect(() => {
     let i = 0;
-    const speed = 20; 
+    const speed = 10; // чуть ускорил, чтобы не ждать долго большие JSONы
     const timer = setInterval(() => {
       if (i < text.length) {
         setDisplayedText((prev) => prev + text.charAt(i));
@@ -46,9 +47,10 @@ const TypewriterEffect = ({ text, onComplete }: { text: string, onComplete?: () 
     }, speed);
     return () => clearInterval(timer);
   }, [text, onComplete]);
-  return <span>{displayedText}</span>;
+  return <span className="whitespace-pre-wrap">{displayedText}</span>;
 };
 
+// --- ОСНОВНОЙ КОМПОНЕНТ ---
 export default function Home() {
   // --- СОСТОЯНИЯ ПРИЛОЖЕНИЯ ---
   const [appPhase, setAppPhase] = useState<AppPhase>("auth");
@@ -124,10 +126,12 @@ export default function Home() {
     }
   };
 
-  const handleSendMessage = (content: string, files?: File[]) => {
+  // --- ЛОГИКА ОТПРАВКИ СООБЩЕНИЯ (ИНТЕГРАЦИЯ С БЭКОМ) ---
+  const handleSendMessage = async (content: string, files?: File[]) => {
     if (!content.trim() && (!files || files.length === 0)) return;
     if (!isChatStarted) setIsChatStarted(true);
 
+    // 1. Сообщение пользователя
     const userMessage: Message = {
       id: Date.now().toString(),
       role: "user",
@@ -145,36 +149,74 @@ export default function Home() {
       setActiveChatId(newId);
     }
 
-    const isCodeRequest = content.toLowerCase().includes("код") || content.toLowerCase().includes("code");
+    try {
+      // 2. Отправка запроса на бэкенд через Nginx прокси
+      const response = await fetch("/api/generation/ui/full", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        // Формат payload согласно твоему Swagger
+        body: JSON.stringify({
+          url: null,
+          html: null,
+          requirements_text: content, 
+        }),
+      });
 
-    setTimeout(() => {
-      setIsThinking(false);
-      let aiContent = "Это обычный ответ. Если хочешь увидеть код, напиши слово 'код'.";
+      if (!response.ok) {
+         const errorText = await response.text();
+         throw new Error(`Server Error: ${response.status} ${errorText}`);
+      }
+
+      const data = await response.json();
       
-      if (isCodeRequest) {
-        aiContent = "Конечно! Вот код кнопки.";
-        setCurrentCode(`import React from "react";
-export const Button = () => <button>Click me</button>;`);
-        setCurrentFileName("Button.tsx");
-        setIsCodePanelOpen(true);
+      // 3. Форматируем JSON-ответ для отображения
+      const formattedJson = JSON.stringify(data, null, 2);
+      
+      // Формируем текст ответа
+      let replyText = "Генерация завершена. Результат:";
+      // Если бэк вернул массив тест-кейсов, напишем их количество
+      if (data.test_cases && Array.isArray(data.test_cases)) {
+          replyText = `Сгенерировано ${data.test_cases.length} тест-кейсов.`;
       }
 
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: aiContent,
-        isStreaming: true,
+        content: `${replyText}\n\n\`\`\`json\n${formattedJson}\n\`\`\``,
+        isStreaming: false, // Отключим пока стриминг для JSON, чтобы не ломать верстку
       };
+      
       setMessages((prev) => [...prev, aiMessage]);
-    }, 5000);
+
+      // 4. Открываем панель кода с результатом
+      setCurrentCode(formattedJson);
+      setCurrentFileName("generated_tests.json");
+      setIsCodePanelOpen(true);
+
+    } catch (error: any) {
+      console.error("API Error:", error);
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: `⚠️ Ошибка связи с сервером:\n${error.message}`,
+        isStreaming: false,
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setIsThinking(false);
+    }
   };
 
+  // --- АВТОСКРОЛЛ ---
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
     }
   }, [messages, isChatStarted, isThinking]);
 
+  // --- РЕНДЕР ---
   return (
     <div className="relative w-full h-screen bg-black overflow-hidden">
       <AnimatePresence initial={false}>
@@ -266,14 +308,14 @@ export const Button = () => <button>Click me</button>;`);
                 )}
               >
                 {isChatStarted && (
-                   <motion.button
-                     initial={{ opacity: 0 }}
-                     animate={{ opacity: 1 }}
-                     onClick={handleCloseChat}
-                     className="absolute top-4 right-4 z-50 p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full transition-colors"
-                   >
-                     <ChevronDown className="w-5 h-5" />
-                   </motion.button>
+                    <motion.button
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      onClick={handleCloseChat}
+                      className="absolute top-4 right-4 z-50 p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full transition-colors"
+                    >
+                      <ChevronDown className="w-5 h-5" />
+                    </motion.button>
                 )}
 
                 {isChatStarted && (
@@ -295,12 +337,12 @@ export const Button = () => <button>Click me</button>;`);
                           "max-w-[85%] px-5 py-3 rounded-2xl text-base leading-relaxed shadow-sm",
                           msg.role === "user"
                             ? "bg-[#1e40af]/30 text-blue-100 border border-blue-500/20 rounded-br-none"
-                            : "bg-[#1e293b]/60 text-slate-200 border border-slate-700/50 rounded-bl-none whitespace-pre-wrap"
+                            : "bg-[#1e293b]/60 text-slate-200 border border-slate-700/50 rounded-bl-none overflow-x-auto" // добавил overflow для кода
                         )}>
                           {msg.role === "assistant" && msg.isStreaming ? (
                             <TypewriterEffect text={msg.content} />
                           ) : (
-                            msg.content
+                            <span className="whitespace-pre-wrap">{msg.content}</span>
                           )}
                         </div>
                       </motion.div>
@@ -312,7 +354,7 @@ export const Button = () => <button>Click me</button>;`);
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         className="flex w-full justify-start"
                       >
-                         <div className="flex items-center gap-2 px-4 py-3 bg-[#1e293b]/60 border border-lime-500/20 rounded-2xl rounded-bl-none backdrop-blur-sm shadow-[0_0_15px_-5px_rgba(132,204,22,0.3)]">
+                          <div className="flex items-center gap-2 px-4 py-3 bg-[#1e293b]/60 border border-lime-500/20 rounded-2xl rounded-bl-none backdrop-blur-sm shadow-[0_0_15px_-5px_rgba(132,204,22,0.3)]">
                             <motion.span 
                               animate={{ opacity: [0.5, 1, 0.5] }}
                               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
@@ -323,7 +365,7 @@ export const Button = () => <button>Click me</button>;`);
                             <div className="h-8 w-8 relative flex-shrink-0">
                                 <ThinkingPlanet className="w-full h-full" />
                             </div>
-                         </div>
+                          </div>
                       </motion.div>
                     )}
                   </motion.div>

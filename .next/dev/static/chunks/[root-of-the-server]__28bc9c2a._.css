@@ -594,10 +594,6 @@
     right: calc(var(--spacing) * 4);
   }
 
-  .right-6 {
-    right: calc(var(--spacing) * 6);
-  }
-
   .bottom-0 {
     bottom: calc(var(--spacing) * 0);
   }
@@ -734,10 +730,6 @@
 
   .mb-12 {
     margin-bottom: calc(var(--spacing) * 12);
-  }
-
-  .mb-\[7\.5vh\] {
-    margin-bottom: 7.5vh;
   }
 
   .ml-1 {
@@ -1150,6 +1142,10 @@
 
   .overflow-visible {
     overflow: visible;
+  }
+
+  .overflow-x-auto {
+    overflow-x: auto;
   }
 
   .overflow-x-hidden {
@@ -1740,10 +1736,6 @@
 
   .pb-4 {
     padding-bottom: calc(var(--spacing) * 4);
-  }
-
-  .pb-12 {
-    padding-bottom: calc(var(--spacing) * 12);
   }
 
   .text-center {

@@ -578,7 +578,7 @@ const PromptInputAction = ({ tooltip, children, className, side = "top", ...prop
                 children: children
             }, void 0, false, {
                 fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                lineNumber: 350,
+                lineNumber: 352,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(TooltipContent, {
@@ -587,13 +587,13 @@ const PromptInputAction = ({ tooltip, children, className, side = "top", ...prop
                 children: tooltip
             }, void 0, false, {
                 fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                lineNumber: 353,
+                lineNumber: 355,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0))
         ]
     }, void 0, true, {
         fileName: "[project]/components/ui/ai-prompt-box.tsx",
-        lineNumber: 349,
+        lineNumber: 351,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };
@@ -613,12 +613,12 @@ const CustomDivider = ()=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$p
             }
         }, void 0, false, {
             fileName: "[project]/components/ui/ai-prompt-box.tsx",
-            lineNumber: 363,
+            lineNumber: 365,
             columnNumber: 5
         }, ("TURBOPACK compile-time value", void 0))
     }, void 0, false, {
         fileName: "[project]/components/ui/ai-prompt-box.tsx",
-        lineNumber: 362,
+        lineNumber: 364,
         columnNumber: 3
     }, ("TURBOPACK compile-time value", void 0));
 _c11 = CustomDivider;
@@ -760,7 +760,7 @@ const PromptInputBox = /*#__PURE__*/ _s4(__TURBOPACK__imported__module__$5b$proj
                                             className: "h-full w-full object-cover"
                                         }, void 0, false, {
                                             fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                            lineNumber: 508,
+                                            lineNumber: 510,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -773,28 +773,28 @@ const PromptInputBox = /*#__PURE__*/ _s4(__TURBOPACK__imported__module__$5b$proj
                                                 className: "h-3 w-3 text-white"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                                lineNumber: 520,
+                                                lineNumber: 522,
                                                 columnNumber: 23
                                             }, ("TURBOPACK compile-time value", void 0))
                                         }, void 0, false, {
                                             fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                            lineNumber: 513,
+                                            lineNumber: 515,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                    lineNumber: 504,
+                                    lineNumber: 506,
                                     columnNumber: 19
                                 }, ("TURBOPACK compile-time value", void 0))
                             }, index, false, {
                                 fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                lineNumber: 502,
+                                lineNumber: 504,
                                 columnNumber: 15
                             }, ("TURBOPACK compile-time value", void 0)))
                     }, void 0, false, {
                         fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                        lineNumber: 500,
+                        lineNumber: 502,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -804,12 +804,12 @@ const PromptInputBox = /*#__PURE__*/ _s4(__TURBOPACK__imported__module__$5b$proj
                             className: "text-base"
                         }, void 0, false, {
                             fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                            lineNumber: 530,
+                            lineNumber: 532,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0))
                     }, void 0, false, {
                         fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                        lineNumber: 529,
+                        lineNumber: 531,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(PromptInputActions, {
@@ -828,7 +828,7 @@ const PromptInputBox = /*#__PURE__*/ _s4(__TURBOPACK__imported__module__$5b$proj
                                                     className: "h-5 w-5 transition-colors"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                                    lineNumber: 551,
+                                                    lineNumber: 553,
                                                     columnNumber: 17
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -842,18 +842,18 @@ const PromptInputBox = /*#__PURE__*/ _s4(__TURBOPACK__imported__module__$5b$proj
                                                     accept: "image/*"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                                    lineNumber: 552,
+                                                    lineNumber: 554,
                                                     columnNumber: 17
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                            lineNumber: 547,
+                                            lineNumber: 549,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0))
                                     }, void 0, false, {
                                         fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                        lineNumber: 546,
+                                        lineNumber: 548,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -889,17 +889,17 @@ const PromptInputBox = /*#__PURE__*/ _s4(__TURBOPACK__imported__module__$5b$proj
                                                                 className: cn("w-4 h-4", showSearch ? "text-[#1EAEDB]" : "text-inherit")
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                                                lineNumber: 582,
+                                                                lineNumber: 584,
                                                                 columnNumber: 21
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                                            lineNumber: 577,
+                                                            lineNumber: 579,
                                                             columnNumber: 19
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                                        lineNumber: 576,
+                                                        lineNumber: 578,
                                                         columnNumber: 17
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$components$2f$AnimatePresence$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AnimatePresence"], {
@@ -923,23 +923,23 @@ const PromptInputBox = /*#__PURE__*/ _s4(__TURBOPACK__imported__module__$5b$proj
                                                             children: "Swagger"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                                            lineNumber: 587,
+                                                            lineNumber: 589,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                                        lineNumber: 585,
+                                                        lineNumber: 587,
                                                         columnNumber: 17
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                                lineNumber: 566,
+                                                lineNumber: 568,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(CustomDivider, {}, void 0, false, {
                                                 fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                                lineNumber: 600,
+                                                lineNumber: 602,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -972,17 +972,17 @@ const PromptInputBox = /*#__PURE__*/ _s4(__TURBOPACK__imported__module__$5b$proj
                                                                 className: cn("w-4 h-4", showThink ? "text-[#8B5CF6]" : "text-inherit")
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                                                lineNumber: 618,
+                                                                lineNumber: 620,
                                                                 columnNumber: 21
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                                            lineNumber: 613,
+                                                            lineNumber: 615,
                                                             columnNumber: 19
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                                        lineNumber: 612,
+                                                        lineNumber: 614,
                                                         columnNumber: 17
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$components$2f$AnimatePresence$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AnimatePresence"], {
@@ -1006,23 +1006,23 @@ const PromptInputBox = /*#__PURE__*/ _s4(__TURBOPACK__imported__module__$5b$proj
                                                             children: "Code"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                                            lineNumber: 623,
+                                                            lineNumber: 625,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                                        lineNumber: 621,
+                                                        lineNumber: 623,
                                                         columnNumber: 17
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                                lineNumber: 602,
+                                                lineNumber: 604,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(CustomDivider, {}, void 0, false, {
                                                 fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                                lineNumber: 636,
+                                                lineNumber: 638,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1055,17 +1055,17 @@ const PromptInputBox = /*#__PURE__*/ _s4(__TURBOPACK__imported__module__$5b$proj
                                                                 className: cn("w-4 h-4", showCanvas ? "text-[#F97316]" : "text-inherit")
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                                                lineNumber: 654,
+                                                                lineNumber: 656,
                                                                 columnNumber: 21
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                                            lineNumber: 649,
+                                                            lineNumber: 651,
                                                             columnNumber: 19
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                                        lineNumber: 648,
+                                                        lineNumber: 650,
                                                         columnNumber: 17
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$components$2f$AnimatePresence$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AnimatePresence"], {
@@ -1089,30 +1089,30 @@ const PromptInputBox = /*#__PURE__*/ _s4(__TURBOPACK__imported__module__$5b$proj
                                                             children: "Editor"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                                            lineNumber: 659,
+                                                            lineNumber: 661,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                                        lineNumber: 657,
+                                                        lineNumber: 659,
                                                         columnNumber: 17
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                                lineNumber: 638,
+                                                lineNumber: 640,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                        lineNumber: 565,
+                                        lineNumber: 567,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                lineNumber: 545,
+                                lineNumber: 547,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(PromptInputAction, {
@@ -1129,35 +1129,35 @@ const PromptInputBox = /*#__PURE__*/ _s4(__TURBOPACK__imported__module__$5b$proj
                                         className: "h-4 w-4 fill-[#1F2023] animate-pulse"
                                     }, void 0, false, {
                                         fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                        lineNumber: 698,
+                                        lineNumber: 700,
                                         columnNumber: 17
                                     }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$arrow$2d$up$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ArrowUp$3e$__["ArrowUp"], {
                                         className: cn("h-4 w-4", hasContent ? "text-[#1F2023]" : "text-current")
                                     }, void 0, false, {
                                         fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                        lineNumber: 700,
+                                        lineNumber: 702,
                                         columnNumber: 17
                                     }, ("TURBOPACK compile-time value", void 0))
                                 }, void 0, false, {
                                     fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                    lineNumber: 683,
+                                    lineNumber: 685,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             }, void 0, false, {
                                 fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                                lineNumber: 674,
+                                lineNumber: 676,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                        lineNumber: 544,
+                        lineNumber: 546,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                lineNumber: 484,
+                lineNumber: 486,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(ImageViewDialog, {
@@ -1165,7 +1165,7 @@ const PromptInputBox = /*#__PURE__*/ _s4(__TURBOPACK__imported__module__$5b$proj
                 onClose: ()=>setSelectedImage(null)
             }, void 0, false, {
                 fileName: "[project]/components/ui/ai-prompt-box.tsx",
-                lineNumber: 707,
+                lineNumber: 709,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0))
         ]
@@ -1597,7 +1597,7 @@ const BackgroundShader = ()=>{
             const mesh = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Mesh"](geometry, material);
             scene.add(mesh);
             let frameId;
-            const SPEED = 0.002; // Медленная скорость
+            const SPEED = 0.002;
             const animate = {
                 "BackgroundShader.useEffect.animate": ()=>{
                     material.uniforms.iTime.value += SPEED;
@@ -1637,7 +1637,7 @@ const BackgroundShader = ()=>{
         }
     }, void 0, false, {
         fileName: "[project]/components/ui/background-shader.tsx",
-        lineNumber: 138,
+        lineNumber: 136,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };
@@ -1877,7 +1877,7 @@ var _s = __turbopack_context__.k.signature(), _s1 = __turbopack_context__.k.sign
 const useShaderBackground = ()=>{
     _s();
     const canvasRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
-    const animationFrameRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])();
+    const animationFrameRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
     const rendererRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
     class WebGLRenderer {
         canvas;
@@ -1997,7 +1997,9 @@ const useShaderBackground = ()=>{
             return ({
                 "useShaderBackground.useEffect": ()=>{
                     window.removeEventListener('resize', resize);
-                    if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+                    if (animationFrameRef.current !== null) {
+                        cancelAnimationFrame(animationFrameRef.current);
+                    }
                     if (rendererRef.current) rendererRef.current.reset();
                 }
             })["useShaderBackground.useEffect"];
@@ -2119,7 +2121,7 @@ const AuthBackground = ()=>{
         }
     }, void 0, false, {
         fileName: "[project]/components/ui/auth-background.tsx",
-        lineNumber: 243,
+        lineNumber: 245,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };
@@ -3059,7 +3061,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$backgrou
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$chat$2d$sidebar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/chat-sidebar.tsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$auth$2d$screen$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/auth-screen.tsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$loading$2d$screen$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/loading-screen.tsx [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$user$2d$menu$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/user-menu.tsx [app-client] (ecmascript)"); // Меню профиля
+var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$user$2d$menu$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/user-menu.tsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$utils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/lib/utils.ts [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$down$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronDown$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/chevron-down.js [app-client] (ecmascript) <export default as ChevronDown>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$panel$2d$left$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__PanelLeft$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/panel-left.js [app-client] (ecmascript) <export default as PanelLeft>");
@@ -3079,13 +3081,14 @@ var _s = __turbopack_context__.k.signature(), _s1 = __turbopack_context__.k.sign
 ;
 ;
 ;
+// --- ЭФФЕКТ ПЕЧАТНОЙ МАШИНКИ ---
 const TypewriterEffect = ({ text, onComplete })=>{
     _s();
     const [displayedText, setDisplayedText] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "TypewriterEffect.useEffect": ()=>{
             let i = 0;
-            const speed = 20;
+            const speed = 10; // чуть ускорил, чтобы не ждать долго большие JSONы
             const timer = setInterval({
                 "TypewriterEffect.useEffect.timer": ()=>{
                     if (i < text.length) {
@@ -3108,10 +3111,11 @@ const TypewriterEffect = ({ text, onComplete })=>{
         onComplete
     ]);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+        className: "whitespace-pre-wrap",
         children: displayedText
     }, void 0, false, {
         fileName: "[project]/app/page.tsx",
-        lineNumber: 49,
+        lineNumber: 50,
         columnNumber: 10
     }, ("TURBOPACK compile-time value", void 0));
 };
@@ -3194,9 +3198,11 @@ function Home() {
             setIsChatStarted(true);
         }
     };
-    const handleSendMessage = (content, files)=>{
+    // --- ЛОГИКА ОТПРАВКИ СООБЩЕНИЯ (ИНТЕГРАЦИЯ С БЭКОМ) ---
+    const handleSendMessage = async (content, files)=>{
         if (!content.trim() && (!files || files.length === 0)) return;
         if (!isChatStarted) setIsChatStarted(true);
+        // 1. Сообщение пользователя
         const userMessage = {
             id: Date.now().toString(),
             role: "user",
@@ -3220,29 +3226,64 @@ function Home() {
                 ]);
             setActiveChatId(newId);
         }
-        const isCodeRequest = content.toLowerCase().includes("код") || content.toLowerCase().includes("code");
-        setTimeout(()=>{
-            setIsThinking(false);
-            let aiContent = "Это обычный ответ. Если хочешь увидеть код, напиши слово 'код'.";
-            if (isCodeRequest) {
-                aiContent = "Конечно! Вот код кнопки.";
-                setCurrentCode(`import React from "react";
-export const Button = () => <button>Click me</button>;`);
-                setCurrentFileName("Button.tsx");
-                setIsCodePanelOpen(true);
+        try {
+            // 2. Отправка запроса на бэкенд через Nginx прокси
+            const response = await fetch("/api/generation/ui/full", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                // Формат payload согласно твоему Swagger
+                body: JSON.stringify({
+                    url: null,
+                    html: null,
+                    requirements_text: content
+                })
+            });
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Server Error: ${response.status} ${errorText}`);
+            }
+            const data = await response.json();
+            // 3. Форматируем JSON-ответ для отображения
+            const formattedJson = JSON.stringify(data, null, 2);
+            // Формируем текст ответа
+            let replyText = "Генерация завершена. Результат:";
+            // Если бэк вернул массив тест-кейсов, напишем их количество
+            if (data.test_cases && Array.isArray(data.test_cases)) {
+                replyText = `Сгенерировано ${data.test_cases.length} тест-кейсов.`;
             }
             const aiMessage = {
                 id: (Date.now() + 1).toString(),
                 role: "assistant",
-                content: aiContent,
-                isStreaming: true
+                content: `${replyText}\n\n\`\`\`json\n${formattedJson}\n\`\`\``,
+                isStreaming: false
             };
             setMessages((prev)=>[
                     ...prev,
                     aiMessage
                 ]);
-        }, 5000);
+            // 4. Открываем панель кода с результатом
+            setCurrentCode(formattedJson);
+            setCurrentFileName("generated_tests.json");
+            setIsCodePanelOpen(true);
+        } catch (error) {
+            console.error("API Error:", error);
+            const errorMessage = {
+                id: (Date.now() + 1).toString(),
+                role: "assistant",
+                content: `⚠️ Ошибка связи с сервером:\n${error.message}`,
+                isStreaming: false
+            };
+            setMessages((prev)=>[
+                    ...prev,
+                    errorMessage
+                ]);
+        } finally{
+            setIsThinking(false);
+        }
     };
+    // --- АВТОСКРОЛЛ ---
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "Home.useEffect": ()=>{
             if (scrollRef.current) {
@@ -3257,6 +3298,7 @@ export const Button = () => <button>Click me</button>;`);
         isChatStarted,
         isThinking
     ]);
+    // --- РЕНДЕР ---
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "relative w-full h-screen bg-black overflow-hidden",
         children: [
@@ -3272,32 +3314,32 @@ export const Button = () => <button>Click me</button>;`);
                             onLoginSuccess: handleLoginSuccess
                         }, void 0, false, {
                             fileName: "[project]/app/page.tsx",
-                            lineNumber: 187,
+                            lineNumber: 229,
                             columnNumber: 13
                         }, this)
                     }, "auth", false, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 182,
+                        lineNumber: 224,
                         columnNumber: 11
                     }, this),
                     appPhase === "loading" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$loading$2d$screen$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["LoadingScreen"], {
                         onComplete: handleLoadingComplete
                     }, "loading", false, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 192,
+                        lineNumber: 234,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 180,
+                lineNumber: 222,
                 columnNumber: 7
             }, this),
             appPhase === "app" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$lamp$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["LampContainer"], {
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$background$2d$shader$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["BackgroundShader"], {}, void 0, false, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 197,
+                        lineNumber: 239,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$chat$2d$sidebar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ChatSidebar"], {
@@ -3309,7 +3351,7 @@ export const Button = () => <button>Click me</button>;`);
                         activeChatId: activeChatId
                     }, void 0, false, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 199,
+                        lineNumber: 241,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -3339,12 +3381,12 @@ export const Button = () => <button>Click me</button>;`);
                                     className: "w-6 h-6"
                                 }, void 0, false, {
                                     fileName: "[project]/app/page.tsx",
-                                    lineNumber: 221,
+                                    lineNumber: 263,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 215,
+                                lineNumber: 257,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$user$2d$menu$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["UserMenu"], {
@@ -3352,13 +3394,13 @@ export const Button = () => <button>Click me</button>;`);
                                 onLogout: handleLogout
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 224,
+                                lineNumber: 266,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 209,
+                        lineNumber: 251,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3389,24 +3431,24 @@ export const Button = () => <button>Click me</button>;`);
                                             "TestOps ",
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("br", {}, void 0, false, {
                                                 fileName: "[project]/app/page.tsx",
-                                                lineNumber: 239,
+                                                lineNumber: 281,
                                                 columnNumber: 29
                                             }, this),
                                             " Assistant"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/page.tsx",
-                                        lineNumber: 238,
+                                        lineNumber: 280,
                                         columnNumber: 19
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/page.tsx",
-                                    lineNumber: 231,
+                                    lineNumber: 273,
                                     columnNumber: 17
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 229,
+                                lineNumber: 271,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -3435,13 +3477,13 @@ export const Button = () => <button>Click me</button>;`);
                                                     className: "w-5 h-5"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/page.tsx",
-                                                    lineNumber: 275,
-                                                    columnNumber: 22
+                                                    lineNumber: 317,
+                                                    columnNumber: 23
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/page.tsx",
-                                                lineNumber: 269,
-                                                columnNumber: 20
+                                                lineNumber: 311,
+                                                columnNumber: 21
                                             }, this),
                                             isChatStarted && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
                                                 initial: {
@@ -3467,22 +3509,30 @@ export const Button = () => <button>Click me</button>;`);
                                                             },
                                                             className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$utils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["cn"])("flex w-full", msg.role === "user" ? "justify-end" : "justify-start"),
                                                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$utils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["cn"])("max-w-[85%] px-5 py-3 rounded-2xl text-base leading-relaxed shadow-sm", msg.role === "user" ? "bg-[#1e40af]/30 text-blue-100 border border-blue-500/20 rounded-br-none" : "bg-[#1e293b]/60 text-slate-200 border border-slate-700/50 rounded-bl-none whitespace-pre-wrap"),
+                                                                className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$utils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["cn"])("max-w-[85%] px-5 py-3 rounded-2xl text-base leading-relaxed shadow-sm", msg.role === "user" ? "bg-[#1e40af]/30 text-blue-100 border border-blue-500/20 rounded-br-none" : "bg-[#1e293b]/60 text-slate-200 border border-slate-700/50 rounded-bl-none overflow-x-auto" // добавил overflow для кода
+                                                                ),
                                                                 children: msg.role === "assistant" && msg.isStreaming ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(TypewriterEffect, {
                                                                     text: msg.content
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/page.tsx",
-                                                                    lineNumber: 301,
+                                                                    lineNumber: 343,
                                                                     columnNumber: 29
-                                                                }, this) : msg.content
+                                                                }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                    className: "whitespace-pre-wrap",
+                                                                    children: msg.content
+                                                                }, void 0, false, {
+                                                                    fileName: "[project]/app/page.tsx",
+                                                                    lineNumber: 345,
+                                                                    columnNumber: 29
+                                                                }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/page.tsx",
-                                                                lineNumber: 294,
+                                                                lineNumber: 336,
                                                                 columnNumber: 25
                                                             }, this)
                                                         }, msg.id, false, {
                                                             fileName: "[project]/app/page.tsx",
-                                                            lineNumber: 288,
+                                                            lineNumber: 330,
                                                             columnNumber: 23
                                                         }, this)),
                                                     isThinking && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -3517,7 +3567,7 @@ export const Button = () => <button>Click me</button>;`);
                                                                     children: "Думаю..."
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/page.tsx",
-                                                                    lineNumber: 316,
+                                                                    lineNumber: 358,
                                                                     columnNumber: 29
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3526,29 +3576,29 @@ export const Button = () => <button>Click me</button>;`);
                                                                         className: "w-full h-full"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/page.tsx",
-                                                                        lineNumber: 324,
+                                                                        lineNumber: 366,
                                                                         columnNumber: 33
                                                                     }, this)
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/page.tsx",
-                                                                    lineNumber: 323,
+                                                                    lineNumber: 365,
                                                                     columnNumber: 29
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/app/page.tsx",
-                                                            lineNumber: 315,
-                                                            columnNumber: 26
+                                                            lineNumber: 357,
+                                                            columnNumber: 27
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/page.tsx",
-                                                        lineNumber: 310,
+                                                        lineNumber: 352,
                                                         columnNumber: 23
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/page.tsx",
-                                                lineNumber: 280,
+                                                lineNumber: 322,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -3562,18 +3612,18 @@ export const Button = () => <button>Click me</button>;`);
                                                     className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$utils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["cn"])(isChatStarted ? "border-slate-700 shadow-none bg-slate-900/50" : "bg-slate-950/30 backdrop-blur-md border-slate-700/30 shadow-2xl hover:bg-slate-950/50 transition-colors")
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/page.tsx",
-                                                    lineNumber: 337,
+                                                    lineNumber: 379,
                                                     columnNumber: 19
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/page.tsx",
-                                                lineNumber: 332,
+                                                lineNumber: 374,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/page.tsx",
-                                        lineNumber: 255,
+                                        lineNumber: 297,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$components$2f$AnimatePresence$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AnimatePresence"], {
@@ -3606,41 +3656,41 @@ export const Button = () => <button>Click me</button>;`);
                                                 onClose: ()=>setIsCodePanelOpen(false)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/page.tsx",
-                                                lineNumber: 359,
+                                                lineNumber: 401,
                                                 columnNumber: 21
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/page.tsx",
-                                            lineNumber: 352,
+                                            lineNumber: 394,
                                             columnNumber: 19
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/page.tsx",
-                                        lineNumber: 350,
+                                        lineNumber: 392,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 244,
+                                lineNumber: 286,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 227,
+                        lineNumber: 269,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 196,
+                lineNumber: 238,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/page.tsx",
-        lineNumber: 179,
+        lineNumber: 221,
         columnNumber: 5
     }, this);
 }
