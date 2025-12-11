@@ -2,7 +2,7 @@
 import React from "react";
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { ArrowUp, Paperclip, Square, X, Globe, BrainCog, FolderCode } from "lucide-react";
+import { ArrowUp, Paperclip, Square, X, Globe, BrainCog, FolderCode, Terminal } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Utility function for className merging
@@ -373,35 +373,48 @@ const CustomDivider: React.FC = () => (
 
 // Main PromptInputBox Component
 interface PromptInputBoxProps {
-  onSend?: (message: string, files?: File[], mode?: "search" | "think" | "canvas" | null) => void;
+  onSend?: (message: string, files?: File[], mode?: "api-swagger" | "e2e-automation" | "ui-requirements" | "api-automation" | null) => void;
   isLoading?: boolean;
   placeholder?: string;
   className?: string;
 }
 
 export const PromptInputBox = React.forwardRef((props: PromptInputBoxProps, ref: React.Ref<HTMLDivElement>) => {
-  const { onSend = () => {}, isLoading = false, placeholder = "Type your message here...", className } = props;
+  const { onSend = () => {}, isLoading = false, placeholder = "Напишите ваш запрос...", className } = props;
   const [input, setInput] = React.useState("");
   const [files, setFiles] = React.useState<File[]>([]);
   const [filePreviews, setFilePreviews] = React.useState<{ [key: string]: string }>({});
   const [selectedImage, setSelectedImage] = React.useState<string | null>(null);
-  const [showSearch, setShowSearch] = React.useState(false);
-  const [showThink, setShowThink] = React.useState(false);
-  const [showCanvas, setShowCanvas] = React.useState(false);
+  const [showApiSwagger, setShowApiSwagger] = React.useState(false);
+  const [showE2EAutomation, setShowE2EAutomation] = React.useState(false);
+  const [showUIRequirements, setShowUIRequirements] = React.useState(false);
+  const [showApiAutomation, setShowApiAutomation] = React.useState(false);
   const uploadInputRef = React.useRef<HTMLInputElement>(null);
   const promptBoxRef = React.useRef<HTMLDivElement>(null);
 
-  const handleToggleChange = (value: string) => {
-    if (value === "search") {
-      setShowSearch((prev) => !prev);
-      setShowThink(false);
-    } else if (value === "think") {
-      setShowThink((prev) => !prev);
-      setShowSearch(false);
+  const handleToggleChange = (value: "api-swagger" | "e2e-automation" | "ui-requirements" | "api-automation") => {
+    if (value === "api-swagger") {
+      setShowApiSwagger((prev) => !prev);
+      setShowE2EAutomation(false);
+      setShowUIRequirements(false);
+      setShowApiAutomation(false);
+    } else if (value === "e2e-automation") {
+      setShowE2EAutomation((prev) => !prev);
+      setShowApiSwagger(false);
+      setShowUIRequirements(false);
+      setShowApiAutomation(false);
+    } else if (value === "ui-requirements") {
+      setShowUIRequirements((prev) => !prev);
+      setShowApiSwagger(false);
+      setShowE2EAutomation(false);
+      setShowApiAutomation(false);
+    } else if (value === "api-automation") {
+      setShowApiAutomation((prev) => !prev);
+      setShowApiSwagger(false);
+      setShowE2EAutomation(false);
+      setShowUIRequirements(false);
     }
   };
-
-  const handleCanvasToggle = () => setShowCanvas((prev) => !prev);
 
   const isImageFile = (file: File) => file.type.startsWith("image/");
 
@@ -468,20 +481,13 @@ export const PromptInputBox = React.forwardRef((props: PromptInputBoxProps, ref:
 
   const handleSubmit = () => {
     if (input.trim() || files.length > 0) {
-      let activeMode: "search" | "think" | "canvas" | null = null;
-      if (showSearch) activeMode = "search";
-      else if (showThink) activeMode = "think";
-      else if (showCanvas) activeMode = "canvas";
+      let activeMode: "api-swagger" | "e2e-automation" | "ui-requirements" | "api-automation" | null = null;
+      if (showApiSwagger) activeMode = "api-swagger";
+      else if (showE2EAutomation) activeMode = "e2e-automation";
+      else if (showUIRequirements) activeMode = "ui-requirements";
+      else if (showApiAutomation) activeMode = "api-automation";
 
-      // Префиксы можно убрать, если они не нужны в UI
-      let messagePrefix = "";
-      if (showSearch) messagePrefix = "[Swagger/API] ";
-      else if (showThink) messagePrefix = "[Auto-Tests] ";
-      else if (showCanvas) messagePrefix = "[Requirements] ";
-      
-      const formattedInput = messagePrefix ? `${messagePrefix}\n${input}` : input;
-
-      onSend(formattedInput, files, activeMode);
+      onSend(input, files, activeMode);
       setInput("");
       setFiles([]);
       setFilePreviews({});
@@ -540,12 +546,14 @@ export const PromptInputBox = React.forwardRef((props: PromptInputBoxProps, ref:
         <div className="transition-all duration-300 opacity-100">
           <PromptInputTextarea
             placeholder={
-              showSearch
-                ? "Вставьте JSON спецификации OpenAPI или URL эндпоинта..."
-                : showThink
-                ? "Опишите сценарий для генерации автотестов (E2E/API)..."
-                : showCanvas
-                ? "Вставьте требования для генерации ручных тест-кейсов..."
+              showApiSwagger
+                ? "Вставьте URL Swagger документации или JSON спецификацию OpenAPI для ручных тест-кейсов..."
+                : showE2EAutomation
+                ? "Опишите пользовательский сценарий для генерации E2E автотестов (укажите URL приложения)..."
+                : showUIRequirements
+                ? "Опишите требования к UI для генерации тест-кейсов (укажите URL страницы)..."
+                : showApiAutomation
+                ? "Вставьте URL Swagger для генерации Pytest HTTP автотестов..."
                 : placeholder
             }
             className="text-base"
@@ -554,7 +562,7 @@ export const PromptInputBox = React.forwardRef((props: PromptInputBoxProps, ref:
 
         <PromptInputActions className="flex items-center justify-between gap-2 p-0 pt-2">
           <div className="flex items-center gap-1 transition-opacity duration-300 opacity-100 visible">
-            <PromptInputAction tooltip="Загрузите файл">
+            <PromptInputAction tooltip="Загрузить изображение">
               <button
                 onClick={() => uploadInputRef.current?.click()}
                 className="flex h-8 w-8 text-[#9CA3AF] cursor-pointer items-center justify-center rounded-full transition-colors hover:bg-gray-600/30 hover:text-[#D1D5DB]"
@@ -576,25 +584,25 @@ export const PromptInputBox = React.forwardRef((props: PromptInputBoxProps, ref:
             <div className="flex items-center">
               <button
                 type="button"
-                onClick={() => handleToggleChange("search")}
+                onClick={() => handleToggleChange("api-swagger")}
                 className={cn(
                   "rounded-full transition-all flex items-center gap-1 px-2 py-1 border h-8",
-                  showSearch
+                  showApiSwagger
                     ? "bg-[#84cc16]/15 border-[#84cc16] text-[#84cc16]"
                     : "bg-transparent border-transparent text-[#9CA3AF] hover:text-[#D1D5DB]"
                 )}
               >
                 <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
                   <motion.div
-                    animate={{ rotate: showSearch ? 360 : 0, scale: showSearch ? 1.1 : 1 }}
-                    whileHover={{ rotate: showSearch ? 360 : 15, scale: 1.1, transition: { type: "spring", stiffness: 300, damping: 10 } }}
+                    animate={{ rotate: showApiSwagger ? 360 : 0, scale: showApiSwagger ? 1.1 : 1 }}
+                    whileHover={{ rotate: showApiSwagger ? 360 : 15, scale: 1.1, transition: { type: "spring", stiffness: 300, damping: 10 } }}
                     transition={{ type: "spring", stiffness: 260, damping: 25 }}
                   >
-                    <Globe className={cn("w-4 h-4", showSearch ? "text-[#84cc16]" : "text-inherit")} />
+                    <Globe className={cn("w-4 h-4", showApiSwagger ? "text-[#84cc16]" : "text-inherit")} />
                   </motion.div>
                 </div>
                 <AnimatePresence>
-                  {showSearch && (
+                  {showApiSwagger && (
                     <motion.span
                       initial={{ width: 0, opacity: 0 }}
                       animate={{ width: "auto", opacity: 1 }}
@@ -602,7 +610,7 @@ export const PromptInputBox = React.forwardRef((props: PromptInputBoxProps, ref:
                       transition={{ duration: 0.2 }}
                       className="text-xs overflow-hidden whitespace-nowrap text-[#84cc16] flex-shrink-0"
                     >
-                      Swagger
+                      API Ручные
                     </motion.span>
                   )}
                 </AnimatePresence>
@@ -612,25 +620,25 @@ export const PromptInputBox = React.forwardRef((props: PromptInputBoxProps, ref:
 
               <button
                 type="button"
-                onClick={() => handleToggleChange("think")}
+                onClick={() => handleToggleChange("e2e-automation")}
                 className={cn(
                   "rounded-full transition-all flex items-center gap-1 px-2 py-1 border h-8",
-                  showThink
+                  showE2EAutomation
                     ? "bg-[#8B5CF6]/15 border-[#8B5CF6] text-[#8B5CF6]"
                     : "bg-transparent border-transparent text-[#9CA3AF] hover:text-[#D1D5DB]"
                 )}
               >
                 <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
                   <motion.div
-                    animate={{ rotate: showThink ? 360 : 0, scale: showThink ? 1.1 : 1 }}
-                    whileHover={{ rotate: showThink ? 360 : 15, scale: 1.1, transition: { type: "spring", stiffness: 300, damping: 10 } }}
+                    animate={{ rotate: showE2EAutomation ? 360 : 0, scale: showE2EAutomation ? 1.1 : 1 }}
+                    whileHover={{ rotate: showE2EAutomation ? 360 : 15, scale: 1.1, transition: { type: "spring", stiffness: 300, damping: 10 } }}
                     transition={{ type: "spring", stiffness: 260, damping: 25 }}
                   >
-                    <BrainCog className={cn("w-4 h-4", showThink ? "text-[#8B5CF6]" : "text-inherit")} />
+                    <BrainCog className={cn("w-4 h-4", showE2EAutomation ? "text-[#8B5CF6]" : "text-inherit")} />
                   </motion.div>
                 </div>
                 <AnimatePresence>
-                  {showThink && (
+                  {showE2EAutomation && (
                     <motion.span
                       initial={{ width: 0, opacity: 0 }}
                       animate={{ width: "auto", opacity: 1 }}
@@ -638,7 +646,7 @@ export const PromptInputBox = React.forwardRef((props: PromptInputBoxProps, ref:
                       transition={{ duration: 0.2 }}
                       className="text-xs overflow-hidden whitespace-nowrap text-[#8B5CF6] flex-shrink-0"
                     >
-                      Code
+                      E2E Авто
                     </motion.span>
                   )}
                 </AnimatePresence>
@@ -648,25 +656,25 @@ export const PromptInputBox = React.forwardRef((props: PromptInputBoxProps, ref:
 
               <button
                 type="button"
-                onClick={handleCanvasToggle}
+                onClick={() => handleToggleChange("ui-requirements")}
                 className={cn(
                   "rounded-full transition-all flex items-center gap-1 px-2 py-1 border h-8",
-                  showCanvas
+                  showUIRequirements
                     ? "bg-[#F97316]/15 border-[#F97316] text-[#F97316]"
                     : "bg-transparent border-transparent text-[#9CA3AF] hover:text-[#D1D5DB]"
                 )}
               >
                 <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
                   <motion.div
-                    animate={{ rotate: showCanvas ? 360 : 0, scale: showCanvas ? 1.1 : 1 }}
-                    whileHover={{ rotate: showCanvas ? 360 : 15, scale: 1.1, transition: { type: "spring", stiffness: 300, damping: 10 } }}
+                    animate={{ rotate: showUIRequirements ? 360 : 0, scale: showUIRequirements ? 1.1 : 1 }}
+                    whileHover={{ rotate: showUIRequirements ? 360 : 15, scale: 1.1, transition: { type: "spring", stiffness: 300, damping: 10 } }}
                     transition={{ type: "spring", stiffness: 260, damping: 25 }}
                   >
-                    <FolderCode className={cn("w-4 h-4", showCanvas ? "text-[#F97316]" : "text-inherit")} />
+                    <FolderCode className={cn("w-4 h-4", showUIRequirements ? "text-[#F97316]" : "text-inherit")} />
                   </motion.div>
                 </div>
                 <AnimatePresence>
-                  {showCanvas && (
+                  {showUIRequirements && (
                     <motion.span
                       initial={{ width: 0, opacity: 0 }}
                       animate={{ width: "auto", opacity: 1 }}
@@ -674,7 +682,43 @@ export const PromptInputBox = React.forwardRef((props: PromptInputBoxProps, ref:
                       transition={{ duration: 0.2 }}
                       className="text-xs overflow-hidden whitespace-nowrap text-[#F97316] flex-shrink-0"
                     >
-                      Editor
+                      UI Кейсы
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </button>
+
+              <CustomDivider />
+
+              <button
+                type="button"
+                onClick={() => handleToggleChange("api-automation")}
+                className={cn(
+                  "rounded-full transition-all flex items-center gap-1 px-2 py-1 border h-8",
+                  showApiAutomation
+                    ? "bg-[#06b6d4]/15 border-[#06b6d4] text-[#06b6d4]"
+                    : "bg-transparent border-transparent text-[#9CA3AF] hover:text-[#D1D5DB]"
+                )}
+              >
+                <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
+                  <motion.div
+                    animate={{ rotate: showApiAutomation ? 360 : 0, scale: showApiAutomation ? 1.1 : 1 }}
+                    whileHover={{ rotate: showApiAutomation ? 360 : 15, scale: 1.1, transition: { type: "spring", stiffness: 300, damping: 10 } }}
+                    transition={{ type: "spring", stiffness: 260, damping: 25 }}
+                  >
+                    <Terminal className={cn("w-4 h-4", showApiAutomation ? "text-[#06b6d4]" : "text-inherit")} />
+                  </motion.div>
+                </div>
+                <AnimatePresence>
+                  {showApiAutomation && (
+                    <motion.span
+                      initial={{ width: 0, opacity: 0 }}
+                      animate={{ width: "auto", opacity: 1 }}
+                      exit={{ width: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="text-xs overflow-hidden whitespace-nowrap text-[#06b6d4] flex-shrink-0"
+                    >
+                      API Авто
                     </motion.span>
                   )}
                 </AnimatePresence>
@@ -685,10 +729,10 @@ export const PromptInputBox = React.forwardRef((props: PromptInputBoxProps, ref:
           <PromptInputAction
             tooltip={
               isLoading
-                ? "Stop generation"
+                ? "Остановить генерацию"
                 : hasContent
-                ? "Send message"
-                : "Type to send"
+                ? "Отправить сообщение"
+                : "Введите текст для отправки"
             }
           >
             <Button

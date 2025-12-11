@@ -74,24 +74,6 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
-// Validate ../../../app/api/generation/automation/api/route.ts
-{
-  type __IsExpected<Specific extends RouteHandlerConfig<"/api/generation/automation/api">> = Specific
-  const handler = {} as typeof import("../../../app/api/generation/automation/api/route.js")
-  type __Check = __IsExpected<typeof handler>
-  // @ts-ignore
-  type __Unused = __Check
-}
-
-// Validate ../../../app/api/generation/ui/full/route.ts
-{
-  type __IsExpected<Specific extends RouteHandlerConfig<"/api/generation/ui/full">> = Specific
-  const handler = {} as typeof import("../../../app/api/generation/ui/full/route.js")
-  type __Check = __IsExpected<typeof handler>
-  // @ts-ignore
-  type __Unused = __Check
-}
-
 // Validate ../../../app/api/login/route.ts
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/login">> = Specific
@@ -101,28 +83,46 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
-// Validate ../../../app/api/proxy/generation/allure-code/ui/route.ts
+// Validate ../../../app/api/proxy/api-automation/route.ts
 {
-  type __IsExpected<Specific extends RouteHandlerConfig<"/api/proxy/generation/allure-code/ui">> = Specific
-  const handler = {} as typeof import("../../../app/api/proxy/generation/allure-code/ui/route.js")
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/proxy/api-automation">> = Specific
+  const handler = {} as typeof import("../../../app/api/proxy/api-automation/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check
 }
 
-// Validate ../../../app/api/proxy/generation/api-vms/route.ts
+// Validate ../../../app/api/proxy/api-swagger/route.ts
 {
-  type __IsExpected<Specific extends RouteHandlerConfig<"/api/proxy/generation/api-vms">> = Specific
-  const handler = {} as typeof import("../../../app/api/proxy/generation/api-vms/route.js")
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/proxy/api-swagger">> = Specific
+  const handler = {} as typeof import("../../../app/api/proxy/api-swagger/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check
 }
 
-// Validate ../../../app/api/proxy/requirements/ui/route.ts
+// Validate ../../../app/api/proxy/chat/route.ts
 {
-  type __IsExpected<Specific extends RouteHandlerConfig<"/api/proxy/requirements/ui">> = Specific
-  const handler = {} as typeof import("../../../app/api/proxy/requirements/ui/route.js")
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/proxy/chat">> = Specific
+  const handler = {} as typeof import("../../../app/api/proxy/chat/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../../app/api/proxy/e2e-automation/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/proxy/e2e-automation">> = Specific
+  const handler = {} as typeof import("../../../app/api/proxy/e2e-automation/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../../app/api/proxy/ui-requirements/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/proxy/ui-requirements">> = Specific
+  const handler = {} as typeof import("../../../app/api/proxy/ui-requirements/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check

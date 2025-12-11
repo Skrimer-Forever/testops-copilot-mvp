@@ -1243,6 +1243,10 @@
     border-style: none;
   }
 
+  .border-\[\#06b6d4\] {
+    border-color: #06b6d4;
+  }
+
   .border-\[\#8B5CF6\] {
     border-color: #8b5cf6;
   }
@@ -1417,6 +1421,11 @@
   .bg-\[\#2E3033\]\/80 {
     background-color: #2e3033cc;
     background-color: lab(19.7509% -.355721 -2.24417 / .8);
+  }
+
+  .bg-\[\#06b6d4\]\/15 {
+    background-color: #06b6d426;
+    background-color: lab(67.6998% -31.5985 -26.6758 / .15);
   }
 
   .bg-\[\#8B5CF6\]\/15 {
@@ -1909,6 +1918,10 @@
 
   .text-\[\#1F2023\] {
     color: #1f2023;
+  }
+
+  .text-\[\#06b6d4\] {
+    color: #06b6d4;
   }
 
   .text-\[\#8B5CF6\] {

@@ -238,7 +238,7 @@ export default function Home() {
   const handleSendMessage = async (
     content: string,
     files?: File[],
-    mode?: "search" | "think" | "canvas" | null
+    mode?: "api-swagger" | "e2e-automation" | "ui-requirements" | "api-automation" | null
   ) => {
     if (!content.trim() && (!files || files.length === 0)) return;
     if (!isChatStarted) setIsChatStarted(true);
@@ -282,8 +282,7 @@ export default function Home() {
 
 
       // --- НАСТРОЙКА API ENDPOINT ---
-      // По дефолту: используем ui/full
-      let apiEndpoint = "/api/generation/ui/full"; 
+      let apiEndpoint = "/api/proxy/chat"; // По умолчанию - обычный чат с LLM
       
       const urlRegex = /https?:\/\/[^\s]+/g;
       const foundUrls = content.match(urlRegex);
@@ -291,22 +290,22 @@ export default function Home() {
 
 
       let requestBody: any = {
-        requirements_text: content,
-        base_url: targetBaseUrl,
-        url: null,
-        html: null,
+        messages: [{ role: "user", content: content }],
+        model: "deepseek-chat",
+        temperature: 0.7,
       };
 
 
-      if (mode === "search") {
-        apiEndpoint = "/api/proxy/generation/api-vms";
+      if (mode === "api-swagger") {
+        apiEndpoint = "/api/proxy/api-swagger";
         requestBody = {
           swagger_url: content.includes("http") ? content.trim() : null,
           swagger_json: !content.includes("http") ? content : null,
         };
-      } else if (mode === "think") {
-        apiEndpoint = `/api/proxy/generation/automation/e2e?base_url=${encodeURIComponent(targetBaseUrl || "https://example.com")}`;
+      } else if (mode === "e2e-automation") {
+        apiEndpoint = "/api/proxy/e2e-automation";
         requestBody = {
+          base_url: targetBaseUrl || "https://example.com",
           name: "Auto-generated Suite",
           cases: [
             {
@@ -320,18 +319,33 @@ export default function Home() {
             },
           ],
         };
-      } else if (mode === "canvas") {
-        apiEndpoint = "/api/proxy/generation/allure-code/ui"; 
+      } else if (mode === "api-automation") {
+        apiEndpoint = "/api/proxy/api-automation";
         
-        requestBody = { 
-            requirements_text: content,
-            url: targetBaseUrl,
-            html: null
+        // Извлекаем URL из текста
+        const swaggerUrlMatch = content.match(urlRegex);
+        const swaggerUrl = swaggerUrlMatch ? swaggerUrlMatch[0] : content.trim();
+        
+        requestBody = {
+          name: "API Automation Suite",
+          cases: [
+            {
+              id: "api-auto-1",
+              title: "Swagger API Tests",
+              description: `Generate pytest tests from Swagger`,
+              steps: [],
+              expected_result: "API tests generated successfully",
+              priority: "HIGH",
+              tags: ["api", "pytest", "swagger"]
+            }
+          ],
+          swagger_url: swaggerUrl.startsWith('http') ? swaggerUrl : null
         };
       }
+      
 
 
-      console.log(`>>> Calling API [${mode || "default"}]:`, apiEndpoint);
+      console.log(`>>> Calling API [${mode || "chat"}]:`, apiEndpoint);
       
       const response = await fetch(apiEndpoint, {
         method: "POST",
@@ -350,35 +364,42 @@ export default function Home() {
       console.log(">>> RESPONSE DATA:", data);
 
 
-      let replyText = "✅ Результат генерации:";
+      let replyText = "✅ Результат:";
       let snippets: CodeSnippet[] = [];
       let hasCode = false;
 
 
+      // --- ОБРАБОТКА ОБЫЧНОГО ЧАТА (LLM) ---
+      if (!mode) {
+        // Поддержка разных форматов ответа от LLM
+        if (data.choices && data.choices[0]?.message?.content) {
+          replyText = data.choices[0].message.content;
+        } else if (data.message) {
+          replyText = data.message;
+        } else if (data.content) {
+          replyText = data.content;
+        } else if (typeof data === 'string') {
+          replyText = data;
+        }
+      }
+      
       // --- ЛОГИКА РАЗБИЕНИЯ ALLURE CODE (ОДНА СТРОКА -> МНОГО ФАЙЛОВ) ---
-      if (data.allure_code) {
+      else if (data.allure_code) {
           const fullCode = data.allure_code.replace(/\\n/g, "\n");
           
-          // 1. Вытаскиваем импорты (строки начинающиеся с import или from)
           const lines = fullCode.split('\n');
           const imports = lines.filter((l: string) => l.trim().startsWith('import') || l.trim().startsWith('from')).join('\n');
           
-          // 2. Разбиваем код по объявлению классов (ищем "\nclass ")
-          // Используем regex с lookahead, чтобы сохранить слово class
           const rawParts = fullCode.split(/\n(?=class\s+Test)/g);
 
-          // Если удалось разбить больше чем на 1 часть (значит есть несколько классов)
           if (rawParts.length > 1) {
               replyText = `✅ Сгенерировано ${data.test_count || rawParts.length - 1} тестов (Allure).`;
               
               rawParts.forEach((part: string, index: number) => {
-                  // Пропускаем часть, если это только одни импорты (обычно нулевой элемент)
                   if (!part.includes("class Test") && !part.includes("def test_")) return;
 
-                  // Собираем сниппет: Импорты + Отступ + Сам Класс
                   const snippetCode = (part.includes("import ") ? "" : imports + "\n\n") + part.trim();
                   
-                  // Пытаемся вытащить имя класса для названия файла
                   const nameMatch = part.match(/class\s+(Test[A-Za-z0-9_]+)/);
                   const fileName = nameMatch ? `${nameMatch[1]}.py` : `test_scenario_${index}.py`;
 
@@ -392,7 +413,6 @@ export default function Home() {
               });
               hasCode = true;
           } 
-          // Если разбить не получилось (один класс или функции), отдаем целиком
           else {
               replyText = `✅ Сгенерировано ${data.test_count || 1} тестов.`;
               snippets.push({
@@ -406,7 +426,6 @@ export default function Home() {
           }
       }
       
-      // --- СТАРЫЙ ФОРМАТ (МАССИВ ФАЙЛОВ) ---
       else if (data.test_files || data.files || (Array.isArray(data))) {
           const filesArray = data.test_files || data.files || data;
           if (Array.isArray(filesArray)) {
@@ -422,21 +441,19 @@ export default function Home() {
           }
       }
 
-      // --- PYTEST CODE (E2E AGENT) ---
       else if (data.pytest_code) {
-          replyText = "✅ Автотест сгенерирован.";
+          replyText = "✅ Pytest автотесты сгенерированы.";
           const code = data.pytest_code.replace(/\\n/g, "\n");
           snippets.push({
              id: `snippet-${Date.now()}`,
-             title: "autotests.py",
+             title: "test_api_automation.py",
              preview: code.split('\n').slice(0, 5).join('\n') + "\n...",
              fullCode: code,
              language: "python"
           });
           hasCode = true;
       }
-      // --- SWAGGER JSON ---
-      else if (mode === "search" || data.test_suite) {
+      else if (mode === "api-swagger" || data.test_suite) {
          replyText = `✅ API тесты из Swagger обработаны.`;
          const code = JSON.stringify(data, null, 2);
          snippets.push({
@@ -448,7 +465,6 @@ export default function Home() {
          });
          hasCode = true;
       }
-      // --- MANUAL CASES ---
       else if (data.test_cases || data.covered_features) {
          const cases = data.test_cases || data.covered_features;
          replyText = `✅ Сгенерировано ${Array.isArray(cases) ? cases.length : 0} тест-кейсов.`;
