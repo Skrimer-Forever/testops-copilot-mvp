@@ -166,6 +166,7 @@
     --color-lime-500: #80cd00;
     --color-lime-600: #62a400;
     --color-sky-400: #00bcfe;
+    --color-sky-500: #00a5ef;
     --color-blue-100: #dbeafe;
     --color-blue-400: #54a2ff;
     --color-blue-500: #3080ff;
@@ -239,6 +240,7 @@
       --color-lime-500: lab(75.3197% -46.6547 86.1778);
       --color-lime-600: lab(61.1055% -41.0235 73.1483);
       --color-sky-400: lab(70.687% -23.6078 -45.9483);
+      --color-sky-500: lab(63.3038% -18.433 -51.0407);
       --color-blue-100: lab(92.0301% -2.24757 -11.6453);
       --color-blue-400: lab(65.0361% -1.42062 -56.9803);
       --color-blue-500: lab(54.1736% 13.3368 -74.6839);
@@ -1221,6 +1223,11 @@
     border-width: 2px;
   }
 
+  .border-t {
+    border-top-style: var(--tw-border-style);
+    border-top-width: 1px;
+  }
+
   .border-r {
     border-right-style: var(--tw-border-style);
     border-right-width: 1px;
@@ -1547,6 +1554,16 @@
     }
   }
 
+  .bg-slate-900\/80 {
+    background-color: #0f172bcc;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .bg-slate-900\/80 {
+      background-color: color-mix(in oklab, var(--color-slate-900) 80%, transparent);
+    }
+  }
+
   .bg-slate-950 {
     background-color: var(--color-slate-950);
   }
@@ -1606,6 +1623,20 @@
 
   .from-slate-300 {
     --tw-gradient-from: var(--color-slate-300);
+    --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
+  }
+
+  .from-slate-950\/50 {
+    --tw-gradient-from: #02061880;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .from-slate-950\/50 {
+      --tw-gradient-from: color-mix(in oklab, var(--color-slate-950) 50%, transparent);
+    }
+  }
+
+  .from-slate-950\/50 {
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
   }
 
@@ -1940,6 +1971,10 @@
     color: var(--color-sky-400);
   }
 
+  .text-sky-500 {
+    color: var(--color-sky-500);
+  }
+
   .text-slate-200 {
     color: var(--color-slate-200);
   }
@@ -2175,6 +2210,12 @@
 
   .placeholder\:text-slate-600::placeholder {
     color: var(--color-slate-600);
+  }
+
+  @media (hover: hover) {
+    .hover\:border-slate-700:hover {
+      border-color: var(--color-slate-700);
+    }
   }
 
   @media (hover: hover) {

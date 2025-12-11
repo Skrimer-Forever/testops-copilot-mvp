@@ -1,35 +1,43 @@
 import { NextResponse } from "next/server";
 
+const BACKEND_URL = "http://176.123.161.105:8000"; 
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { requirements_text } = body;
-
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    const mockResponse = {
-      test_cases: [
-        {
-          id: "TC-001",
-          title: "Проверка авторизации",
-          steps: ["Открыть страницу", "Ввести логин", "Нажать вход"],
-          expected: "Успешный вход"
-        },
-        {
-          id: "TC-002",
-          title: "Проверка API генерации",
-          steps: [`Отправить запрос: ${requirements_text || "пусто"}`],
-          expected: "Получен ответ 200 OK"
-        }
-      ]
+    const pythonPayload = {
+        requirements_text: body.requirements_text || "",
+        url: body.url || null,
+        html: body.html || null
     };
 
-    return NextResponse.json(mockResponse);
+    console.log(">>> Proxying default request to:", `${BACKEND_URL}/generation/ui/full`);
 
-  } catch (error) {
-    console.error("API Error:", error);
+    const response = await fetch(`${BACKEND_URL}/generation/ui/full`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
+      body: JSON.stringify(pythonPayload),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Backend Error (${response.status}):`, errorText);
+      return NextResponse.json(
+        { error: "Backend Error", details: errorText },
+        { status: response.status }
+      );
+    }
+
+    const data = await response.json();
+    return NextResponse.json(data);
+
+  } catch (error: any) {
+    console.error("Proxy Error:", error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: "Internal Proxy Error", details: error.message },
       { status: 500 }
     );
   }

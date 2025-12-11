@@ -41,7 +41,7 @@ const mod = __turbopack_context__.x("next/dist/server/app-render/after-task-asyn
 
 module.exports = mod;
 }),
-"[project]/app/api/generation/ui/full/route.ts [app-route] (ecmascript)", ((__turbopack_context__) => {
+"[project]/app/api/proxy/generation/allure-code/ui/route.ts [app-route] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
 __turbopack_context__.s([
@@ -50,41 +50,34 @@ __turbopack_context__.s([
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/server.js [app-route] (ecmascript)");
 ;
-const BACKEND_URL = "http://176.123.161.105:8000";
-async function POST(req) {
+// Убедись, что адрес бэкенда правильный (обычно localhost:8000 или из .env)
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://176.123.161.105:8000";
+async function POST(request) {
     try {
-        const body = await req.json();
-        const pythonPayload = {
-            requirements_text: body.requirements_text || "",
-            url: body.url || null,
-            html: body.html || null
-        };
-        console.log(">>> Proxying default request to:", `${BACKEND_URL}/generation/ui/full`);
-        const response = await fetch(`${BACKEND_URL}/generation/ui/full`, {
+        const body = await request.json();
+        // Перенаправляем на нужный тебе эндпоинт Python-бэкенда
+        const targetUrl = `${API_URL}/generation/allure-code/ui`;
+        console.log("Proxying to:", targetUrl);
+        const res = await fetch(targetUrl, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
+                "Content-Type": "application/json"
             },
-            body: JSON.stringify(pythonPayload)
+            body: JSON.stringify(body)
         });
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error(`Backend Error (${response.status}):`, errorText);
+        if (!res.ok) {
+            const errorText = await res.text();
             return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-                error: "Backend Error",
-                details: errorText
+                error: `Backend Error: ${res.status} ${errorText}`
             }, {
-                status: response.status
+                status: res.status
             });
         }
-        const data = await response.json();
+        const data = await res.json();
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json(data);
     } catch (error) {
-        console.error("Proxy Error:", error);
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-            error: "Internal Proxy Error",
-            details: error.message
+            error: error.message
         }, {
             status: 500
         });
@@ -93,4 +86,4 @@ async function POST(req) {
 }),
 ];
 
-//# sourceMappingURL=%5Broot-of-the-server%5D__f2250e0d._.js.map
+//# sourceMappingURL=%5Broot-of-the-server%5D__110e76ac._.js.map

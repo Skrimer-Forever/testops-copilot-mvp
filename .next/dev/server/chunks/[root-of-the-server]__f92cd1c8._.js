@@ -54,12 +54,21 @@ const BACKEND_URL = "http://176.123.161.105:8000";
 async function POST(req) {
     try {
         const body = await req.json();
-        const res = await fetch(`${BACKEND_URL}/generation/ui/full`, {
+        const { requirements_text, base_url, url, html } = body;
+        const pythonPayload = {
+            requirements_text: requirements_text || "",
+            url: url || null,
+            html: html || null
+        };
+        const queryParams = base_url ? `?base_url=${encodeURIComponent(base_url)}` : "";
+        const targetUrl = `${BACKEND_URL}/generation/allure_code/api${queryParams}`;
+        console.log(">>> Calling New Endpoint:", targetUrl);
+        const res = await fetch(targetUrl, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(body)
+            body: JSON.stringify(pythonPayload)
         });
         if (!res.ok) {
             const errorText = await res.text();
@@ -72,7 +81,7 @@ async function POST(req) {
         const data = await res.json();
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json(data);
     } catch (error) {
-        console.error("Proxy Error (Requirements):", error);
+        console.error("Proxy Error (Allure Code):", error);
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
             error: "Internal Proxy Error",
             details: error.message
