@@ -28,11 +28,24 @@ AI-ассистент для тестирования с интеграцией 
 - PostgreSQL 14+ (опционально SQLite для dev)
     
 
+## Структура проекта
+
+testops-copilot-mvp/  
+├── app/ Next.js App Router  
+│ ├── api/ API routes  
+│ ├── layout.tsx Root layout  
+│ └── page.tsx Главная страница  
+├── components/ React компоненты  
+├── lib/ Утилиты  
+├── prisma/ Database schema  
+├── .env Environment variables  
+└── package.json Dependencies
+
 ## Установка
 
 ## Клонирование репозитория
 
-`git clone https://github.com/Skrimer-Forever/testops-copilot-mvp.git cd testops-copilot-mvp`
+`git clone https://github.com/Skrimer-Forever/testops-copilot-mvp.git'
 
 ## Установка зависимостей
 
