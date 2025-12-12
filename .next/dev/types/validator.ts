@@ -119,10 +119,10 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
-// Validate ../../../app/api/proxy/ui-requirements/route.ts
+// Validate ../../../app/api/proxy/ui-cases/route.ts
 {
-  type __IsExpected<Specific extends RouteHandlerConfig<"/api/proxy/ui-requirements">> = Specific
-  const handler = {} as typeof import("../../../app/api/proxy/ui-requirements/route.js")
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/proxy/ui-cases">> = Specific
+  const handler = {} as typeof import("../../../app/api/proxy/ui-cases/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check

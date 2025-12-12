@@ -5,39 +5,36 @@ const BACKEND_URL = "http://176.123.161.105:8000";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { requirements_text, base_url, url, html } = body;
+    
+    console.log(">>> Proxying API Manual Cases to:", `${BACKEND_URL}/generation/allure-code/api`);
 
-    const pythonPayload = {
-      requirements_text: requirements_text || "",
-      url: url || null,
-      html: html || null
-    };
-    const queryParams = base_url ? `?base_url=${encodeURIComponent(base_url)}` : "";
-    const targetUrl = `${BACKEND_URL}/generation/allure_code/api${queryParams}`;
+    const response = await fetch(
+      `${BACKEND_URL}/generation/allure-code/api`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
+        body: JSON.stringify(body),
+      }
+    );
 
-    console.log(">>> Calling New Endpoint:", targetUrl);
-
-    const res = await fetch(targetUrl, { 
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(pythonPayload),
-    });
-
-    if (!res.ok) {
-      const errorText = await res.text();
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Backend Error (${response.status}):`, errorText);
       return NextResponse.json(
-        { error: `Backend Error: ${res.status} ${errorText}` },
-        { status: res.status }
+        { error: "Backend Error", details: errorText },
+        { status: response.status }
       );
     }
 
-    const data = await res.json();
+    const data = await response.json();
+    console.log(">>> Backend response:", data);
     return NextResponse.json(data);
-
+    
   } catch (error: any) {
-    console.error("Proxy Error (Allure Code):", error);
+    console.error("Proxy Error:", error);
     return NextResponse.json(
       { error: "Internal Proxy Error", details: error.message },
       { status: 500 }

@@ -322,7 +322,6 @@ export default function Home() {
       } else if (mode === "api-automation") {
         apiEndpoint = "/api/proxy/api-automation";
         
-        // Извлекаем URL из текста
         const swaggerUrlMatch = content.match(urlRegex);
         const swaggerUrl = swaggerUrlMatch ? swaggerUrlMatch[0] : content.trim();
         
@@ -341,8 +340,14 @@ export default function Home() {
           ],
           swagger_url: swaggerUrl.startsWith('http') ? swaggerUrl : null
         };
+      } else if (mode === "ui-requirements") {
+        apiEndpoint = "/api/proxy/ui-cases"; 
+        requestBody = { 
+            requirements_text: content,
+            url: targetBaseUrl,
+            html: null
+        };
       }
-      
 
 
       console.log(`>>> Calling API [${mode || "chat"}]:`, apiEndpoint);

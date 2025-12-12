@@ -5,24 +5,20 @@ const BACKEND_URL = "http://176.123.161.105:8000";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { requirements_text, url, html } = body;
+    
+    console.log(">>> Proxying UI Cases to:", `${BACKEND_URL}/generation/allure-code/ui`);
 
-    const pythonPayload = {
-      requirements_text: requirements_text || "",
-      url: url || null,
-      html: html || null,
-    };
-
-    console.log(">>> Proxying UI Requirements request to:", `${BACKEND_URL}/generation/allure-code/ui`);
-
-    const response = await fetch(`${BACKEND_URL}/generation/allure-code/ui`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-      },
-      body: JSON.stringify(pythonPayload),
-    });
+    const response = await fetch(
+      `${BACKEND_URL}/generation/allure-code/ui`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
+        body: JSON.stringify(body),
+      }
+    );
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -35,8 +31,9 @@ export async function POST(req: Request) {
 
     const data = await response.json();
     return NextResponse.json(data);
+    
   } catch (error: any) {
-    console.error("Proxy Error (UI Requirements):", error);
+    console.error("Proxy Error:", error);
     return NextResponse.json(
       { error: "Internal Proxy Error", details: error.message },
       { status: 500 }
