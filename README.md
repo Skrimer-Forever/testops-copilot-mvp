@@ -211,4 +211,4 @@ location / {     proxy_pass http://localhost:3000;    proxy_http_version 1.1;   
 - ## Авторы 
 - Разработано для хакатона Cloud.ru TestOps 
 - **Skrimer-Forever** - [GitHub](https://github.com/Skrimer-Forever) 
-- **sm1ley68** - [GitHub](https://github.com/sm1ley68) ## Лицензия MIT`
+- **sm1ley68** - [GitHub](https://github.com/sm1ley68)

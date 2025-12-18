@@ -1,8 +1,5 @@
 {
   "/api/chats/route": "app/api/chats/route.js",
-  "/api/proxy/api-automation/route": "app/api/proxy/api-automation/route.js",
-  "/api/proxy/api-swagger/route": "app/api/proxy/api-swagger/route.js",
-  "/api/proxy/e2e-automation/route": "app/api/proxy/e2e-automation/route.js",
-  "/api/proxy/ui-cases/route": "app/api/proxy/ui-cases/route.js",
+  "/api/login/route": "app/api/login/route.js",
   "/page": "app/page.js"
 }
